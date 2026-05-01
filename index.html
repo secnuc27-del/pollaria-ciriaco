@@ -41,7 +41,7 @@
   content="geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()">
 
 <title>Pollaria Ciriaco 🍗</title>
-<link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Pollaria%20Ciriaco%20%F0%9F%8D%97%22%2C%22short_name%22%3A%22Pollaria%22%2C%22description%22%3A%22Frango%20frito%20artesanal%20-%20Brasil%C3%A9ia%20%26%20Epitaciol%C3%A2ndia%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22theme_color%22%3A%22%23D4500A%22%2C%22background_color%22%3A%22%230E0A04%22%2C%22lang%22%3A%22pt-BR%22%2C%22categories%22%3A%5B%22food%22%2C%22shopping%22%5D%2C%22icons%22%3A%5B%7B%22src%22%3A%22icon-192.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%2C%7B%22src%22%3A%22icon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#D4500A">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -558,10 +558,28 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
 .ab-hot{background:rgba(212,80,10,.2);color:var(--flame);border:1px solid rgba(212,80,10,.3);}
 .ab-new{background:rgba(37,211,102,.15);color:#4ADE80;border:1px solid rgba(37,211,102,.25);}
 
-/* BOTÃO INSTALAR APP */
-.pwa-install-btn{position:fixed;bottom:24px;right:80px;z-index:150;background:linear-gradient(135deg,#1a0e06,#2a1a08);border:1px solid rgba(212,80,10,.4);border-radius:100px;padding:12px 18px;color:var(--flame);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:none;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(212,80,10,.3);-webkit-tap-highlight-color:transparent;transition:all .2s;}
-.pwa-install-btn.show{display:flex;}
-.pwa-install-btn:active{transform:scale(.97);}
+/* PWA BANNER NATIVO */
+.pwa-banner{
+  position:fixed;top:-100px;left:50%;transform:translateX(-50%);
+  width:94%;max-width:400px;background:rgba(20,14,6,.96);
+  border:1px solid rgba(212,80,10,.5);border-radius:16px;
+  padding:12px 16px;z-index:9999;display:flex;
+  align-items:center;justify-content:space-between;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);
+  backdrop-filter:blur(20px);
+  transition:top .5s cubic-bezier(.16,1,.3,1), opacity .5s;
+  opacity:0;
+}
+.pwa-banner.show{top:20px;opacity:1;}
+.pb-content{display:flex;align-items:center;gap:12px;flex:1;}
+.pb-icon{font-size:28px;}
+.pb-text{display:flex;flex-direction:column;}
+.pb-text strong{color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;}
+.pb-text span{color:rgba(255,255,255,.7);font-size:11px;}
+.pb-actions{display:flex;align-items:center;gap:12px;}
+.pb-btn-install{background:linear-gradient(135deg,var(--ember),var(--flame));border:none;border-radius:100px;padding:8px 16px;color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.pb-btn-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:16px;cursor:pointer;padding:4px;}
+
 
 /* ══════════════════════════════════════════
    CSS — PAINEL ADMIN
@@ -799,6 +817,10 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
         <label>Descrição (opcional)</label>
         <input type="text" id="ap-desc" placeholder="Ex: Crocante por fora, suculento por dentro">
       </div>
+      <div class="admin-field">
+        <label>URL da Imagem (opcional)</label>
+        <input type="text" id="ap-img" placeholder="Ex: https://imgur.com/foto.jpg">
+      </div>
       <div class="admin-status" id="admin-status"></div>
       <button class="admin-add-btn" onclick="adminAddProduct()">+ Adicionar Produto</button>
     </div>
@@ -810,10 +832,20 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
   </div>
 </div>
 
-<!-- BOTÃO INSTALAR APP (PWA) -->
-<button class="pwa-install-btn" id="pwa-install-btn" onclick="installPWA()">
-  📲 Instalar App
-</button>
+<!-- BANNER INSTALAR APP (PWA) -->
+<div class="pwa-banner" id="pwa-banner">
+  <div class="pb-content">
+    <div class="pb-icon">📲</div>
+    <div class="pb-text">
+      <strong>Instalar Aplicativo</strong>
+      <span>Baixe nosso app para pedir mais rápido!</span>
+    </div>
+  </div>
+  <div class="pb-actions">
+    <button class="pb-btn-install" onclick="installPWA()">Baixar</button>
+    <button class="pb-btn-close" onclick="closePWABanner()">✕</button>
+  </div>
+</div>
 
 <canvas id="particles"></canvas>
 <div class="toast" id="toast"></div>
@@ -2273,6 +2305,7 @@ window.adminAddProduct = async function() {
   const cat   = document.getElementById('ap-cat').value;
   const badge = document.getElementById('ap-badge').value;
   const desc  = document.getElementById('ap-desc').value.trim();
+  const imgUrl = document.getElementById('ap-img').value.trim();
   const status = document.getElementById('admin-status');
 
   if (!nome) { status.textContent = '⚠️ Digite o nome do produto'; status.style.color='#FF6B6B'; return; }
@@ -2280,7 +2313,7 @@ window.adminAddProduct = async function() {
 
   status.textContent = '⏳ Salvando...'; status.style.color='rgba(255,255,255,.5)';
 
-  const produto = { nome, preco, emoji, categoria: cat, badge, descricao: desc, createdAt: serverTimestamp() };
+  const produto = { nome, preco, emoji, categoria: cat, badge, descricao: desc, imagem: imgUrl, createdAt: serverTimestamp() };
 
   if (_firebaseOk && _db) {
     try {
@@ -2306,6 +2339,7 @@ window.adminAddProduct = async function() {
   document.getElementById('ap-preco').value = '';
   document.getElementById('ap-emoji').value = '';
   document.getElementById('ap-desc').value = '';
+  document.getElementById('ap-img').value = '';
   document.getElementById('ap-badge').value = '';
   document.getElementById('ap-cat').value = 'frango';
   setTimeout(() => { status.textContent = ''; }, 3000);
@@ -2348,8 +2382,10 @@ function renderAdminProducts(produtos) {
   listEl.innerHTML = produtos.map(p => {
     const badgeHtml = p.badge === 'hot' ? '<span class="admin-badge ab-hot">🔥 Hot</span>'
                     : p.badge === 'new' ? '<span class="admin-badge ab-new">✨ Novo</span>' : '';
+    const iconHtml = p.imagem ? `<div class="admin-product-ic"><img src="${escHtml(p.imagem)}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;"></div>`
+                              : `<div class="admin-product-ic">${p.emoji || '🍗'}</div>`;
     return `<div class="admin-product-item">
-      <div class="admin-product-ic">${p.emoji || '🍗'}</div>
+      ${iconHtml}
       <div class="admin-product-info">
         <div class="admin-product-name">${escHtml(p.nome)}${badgeHtml}</div>
         <div class="admin-product-meta">${escHtml(p.categoria || '')} · ${escHtml(p.descricao || '')}</div>
@@ -2372,43 +2408,7 @@ function escHtml(s) {
 // ─────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    const swCode = `
-const CACHE_NAME = 'pollaria-v1';
-const STATIC_ASSETS = ['/', '/index.html'];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)));
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))));
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  if (e.request.url.includes('firestore.googleapis.com')) return;
-  if (e.request.url.includes('fonts.googleapis.com')) return;
-  
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      const network = fetch(e.request).then(res => {
-        if (res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        }
-        return res;
-      }).catch(() => cached);
-      return cached || network;
-    })
-  );
-});`;
-    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl).catch(function() {
-      console.warn('Nota: Service Worker embutido via Blob pode ser bloqueado por restrições de escopo. Para instalação PWA perfeita, recomenda-se o arquivo sw.js externo.');
-    });
+    navigator.serviceWorker.register('sw.js').catch(function() {});
   });
 }
 
@@ -2416,8 +2416,10 @@ let _pwaPrompt = null;
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   _pwaPrompt = e;
-  const btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.classList.add('show');
+  if (!localStorage.getItem('pwaDismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
+    const banner = document.getElementById('pwa-banner');
+    if (banner) setTimeout(() => banner.classList.add('show'), 1500);
+  }
 });
 
 window.installPWA = function() {
@@ -2425,17 +2427,20 @@ window.installPWA = function() {
   _pwaPrompt.prompt();
   _pwaPrompt.userChoice.then(function(r) {
     if (r.outcome === 'accepted') {
-      const btn = document.getElementById('pwa-install-btn');
-      if (btn) btn.classList.remove('show');
+      closePWABanner();
     }
     _pwaPrompt = null;
   });
 };
 
+window.closePWABanner = function() {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) banner.classList.remove('show');
+  localStorage.setItem('pwaDismissed', 'true');
+};
+
 window.addEventListener('appinstalled', function() {
-  const btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.classList.remove('show');
-  _pwaPrompt = null;
+  closePWABanner();
 });
 </script>
 
