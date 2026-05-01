@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -558,6 +557,20 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
 .ab-hot{background:rgba(212,80,10,.2);color:var(--flame);border:1px solid rgba(212,80,10,.3);}
 .ab-new{background:rgba(37,211,102,.15);color:#4ADE80;border:1px solid rgba(37,211,102,.25);}
 
+.admin-img-pick{
+  width:100%;min-height:80px;border-radius:12px;
+  border:2px dashed rgba(212,80,10,.4);
+  background:rgba(212,80,10,.06);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;overflow:hidden;position:relative;
+  transition:border-color .2s,background .2s;
+}
+.admin-img-pick:active{background:rgba(212,80,10,.12);}
+.admin-img-pick.has-img{border-style:solid;border-color:rgba(212,80,10,.5);min-height:140px;}
+.aip-placeholder{display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:rgba(255,255,255,.5);font-size:12px;font-weight:600;letter-spacing:.5px;padding:16px;}
+.admin-img-pick img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;display:block;}
+
 /* PWA BANNER NATIVO */
 .pwa-banner{
   position:fixed;top:-100px;left:50%;transform:translateX(-50%);
@@ -818,8 +831,15 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
         <input type="text" id="ap-desc" placeholder="Ex: Crocante por fora, suculento por dentro">
       </div>
       <div class="admin-field">
-        <label>URL da Imagem (opcional)</label>
-        <input type="text" id="ap-img" placeholder="Ex: https://imgur.com/foto.jpg">
+        <label>Foto do Produto (opcional)</label>
+        <input type="file" id="ap-img-file" accept="image/*" capture="environment" style="display:none" onchange="adminPreviewImage(this)">
+        <input type="hidden" id="ap-img">
+        <div class="admin-img-pick" id="ap-img-pick" onclick="document.getElementById('ap-img-file').click()">
+          <div id="ap-img-preview" class="aip-placeholder">
+            <span style="font-size:26px;line-height:1">📷</span>
+            <span>Toque para escolher da galeria</span>
+          </div>
+        </div>
       </div>
       <div class="admin-status" id="admin-status"></div>
       <button class="admin-add-btn" onclick="adminAddProduct()">+ Adicionar Produto</button>
@@ -2203,10 +2223,6 @@ function closeModal(id){
 
 </div>
 
-<!-- Botão Instalar App (PWA) -->
-<button id="pwa-install-btn" class="pwa-install-btn" onclick="installPWA()">
-  📲 Instalar App
-</button>
 
 </body>
 
@@ -2340,9 +2356,31 @@ window.adminAddProduct = async function() {
   document.getElementById('ap-emoji').value = '';
   document.getElementById('ap-desc').value = '';
   document.getElementById('ap-img').value = '';
+  document.getElementById('ap-img-file').value = '';
+  const pick = document.getElementById('ap-img-pick');
+  const prev = document.getElementById('ap-img-preview');
+  pick.classList.remove('has-img');
+  prev.innerHTML = '<span style="font-size:26px;line-height:1">📷</span><span>Toque para escolher da galeria</span>';
+  prev.className = 'aip-placeholder';
   document.getElementById('ap-badge').value = '';
   document.getElementById('ap-cat').value = 'frango';
   setTimeout(() => { status.textContent = ''; }, 3000);
+};
+
+window.adminPreviewImage = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    document.getElementById('ap-img').value = base64;
+    const pick = document.getElementById('ap-img-pick');
+    const prev = document.getElementById('ap-img-preview');
+    pick.classList.add('has-img');
+    prev.className = '';
+    prev.innerHTML = `<img src="${base64}" alt="preview">`;
+  };
+  reader.readAsDataURL(file);
 };
 
 window.adminDeleteProduct = async function(id) {
@@ -2421,6 +2459,25 @@ window.addEventListener('beforeinstallprompt', function(e) {
     if (banner) setTimeout(() => banner.classList.add('show'), 1500);
   }
 });
+
+// iOS Safari: não dispara beforeinstallprompt, mas podemos sugerir "Adicionar à Tela Início"
+(function() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isIOS && isSafari && !isStandalone && !localStorage.getItem('pwaDismissed')) {
+    const banner = document.getElementById('pwa-banner');
+    const btnInstall = banner && banner.querySelector('.pb-btn-install');
+    if (banner && btnInstall) {
+      btnInstall.textContent = 'Como instalar';
+      btnInstall.onclick = function() {
+        alert('No Safari: toque em Compartilhar (⬆) e depois em "Adicionar à Tela de Início"');
+        closePWABanner();
+      };
+      setTimeout(() => banner.classList.add('show'), 1500);
+    }
+  }
+})();
 
 window.installPWA = function() {
   if (!_pwaPrompt) return;
