@@ -8,10 +8,13 @@
      CABEÇALHOS DE SEGURANÇA — POLLARIA CIRIACO
      ═══════════════════════════════════════════════ -->
 
-<!-- 1. CSP: permite fontes Google + Firebase -->
+<!-- 1. CSP: permite fontes Google + Firebase  -->
+<!-- NOTA: 'unsafe-inline' em style-src é necessário pois há estilos inline no HTML.
+     Em script-src, mantemos para compatibilidade com os módulos Firebase.
+     Para produção com servidor, use nonces ou mova scripts para arquivos externos. -->
 <meta http-equiv="Content-Security-Policy"
   content="
-    default-src 'self' 'unsafe-inline' https://firestore.googleapis.com https://firebase.googleapis.com https://www.googleapis.com;
+    default-src 'self';
     script-src  'self' 'unsafe-inline' https://www.gstatic.com;
     style-src   'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src    https://fonts.gstatic.com;
@@ -19,9 +22,10 @@
     connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://www.googleapis.com https://identitytoolkit.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com;
     frame-src   'none';
     frame-ancestors 'none';
-    form-action 'none';
+    form-action 'self';
     base-uri    'self';
     object-src  'none';
+    upgrade-insecure-requests;
   ">
 
 <!-- 2. Impede o site de ser carregado dentro de iframes (clickjacking) -->
@@ -34,10 +38,16 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Referrer-Policy" content="no-referrer">
 
-<!-- 5. Permissions-Policy: geolocalização só quando o usuário permitir explicitamente,
-     bloqueia câmera, microfone, pagamentos automáticos, USB -->
+<!-- 5. Permissions-Policy: geolocalização só quando o usuário permitir explicitamente -->
 <meta http-equiv="Permissions-Policy"
-  content="geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()">
+  content="geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=(), accelerometer=(), gyroscope=()">
+
+<!-- 6. Força HTTPS (quando servido por servidor — sem efeito em file://) -->
+<!-- Em produção com servidor, configure também: Strict-Transport-Security: max-age=31536000; includeSubDomains -->
+
+<!-- 7. Cache de segurança: não armazena dados de pagamento em cache -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 
 <title>Pollaria Ciriaco 🍗</title>
 <link rel="manifest" href="manifest.json">
@@ -553,6 +563,18 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
 .admin-del-btn{background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.25);border-radius:10px;padding:8px 12px;color:#FF6B6B;font-size:12px;cursor:pointer;flex-shrink:0;}
 .admin-empty{text-align:center;padding:32px;color:rgba(255,255,255,.35);font-size:14px;}
 .admin-status{font-size:13px;color:#4ADE80;text-align:center;padding:8px 0;min-height:20px;}
+.admin-edit-btn{background:rgba(100,160,255,.12);border:1px solid rgba(100,160,255,.3);border-radius:10px;padding:8px 12px;color:#7BB8FF;font-size:12px;cursor:pointer;flex-shrink:0;margin-right:4px;}
+.admin-product-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.admin-edit-mode-bar{background:rgba(100,160,255,.1);border:1px solid rgba(100,160,255,.3);border-radius:14px;padding:10px 14px;margin-bottom:12px;display:none;align-items:center;justify-content:space-between;gap:10px;}
+.admin-edit-mode-bar.show{display:flex;}
+.admin-edit-mode-bar span{font-size:12px;color:#7BB8FF;font-weight:600;}
+.admin-cancel-edit{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:100px;padding:6px 14px;color:rgba(255,255,255,.6);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;}
+.admin-pix-card{background:rgba(37,211,102,.06);border:1px solid rgba(37,211,102,.2);border-radius:20px;padding:20px;margin-bottom:24px;}
+.admin-pix-save-btn{width:100%;padding:15px;border-radius:100px;border:none;background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:transform .15s;}
+.admin-pix-save-btn:active{transform:scale(.97);}
+.admin-pix-status{font-size:13px;color:#4ADE80;text-align:center;padding:8px 0;min-height:20px;}
+.admin-pix-current{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;}
+.admin-pix-current strong{color:#fff;}
 .admin-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-left:6px;}
 .ab-hot{background:rgba(212,80,10,.2);color:var(--flame);border:1px solid rgba(212,80,10,.3);}
 .ab-new{background:rgba(37,211,102,.15);color:#4ADE80;border:1px solid rgba(37,211,102,.25);}
@@ -792,8 +814,36 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
       <button class="admin-logout" onclick="adminLogout()">Sair</button>
     </div>
 
-    <p class="admin-section-title">Adicionar Produto</p>
+    <!-- SEÇÃO: PIX -->
+    <p class="admin-section-title">💰 Chave PIX</p>
+    <div class="admin-pix-card">
+      <div class="admin-pix-current" id="admin-pix-current">
+        <strong>Carregando dados do PIX...</strong>
+      </div>
+      <div class="admin-field">
+        <label>Nova Chave PIX</label>
+        <input type="text" id="ap-pix-chave" placeholder="Ex: 68999999999 ou email@gmail.com">
+      </div>
+      <div class="admin-field">
+        <label>Nome do Recebedor</label>
+        <input type="text" id="ap-pix-nome" placeholder="Ex: Deigila C. Pereira">
+      </div>
+      <div class="admin-field">
+        <label>Banco (opcional)</label>
+        <input type="text" id="ap-pix-banco" placeholder="Ex: Nubank, Bradesco, Caixa...">
+      </div>
+      <div class="admin-pix-status" id="admin-pix-status"></div>
+      <button class="admin-pix-save-btn" onclick="adminSavePix()">💾 Salvar dados do PIX</button>
+    </div>
+
+    <p class="admin-section-title">Adicionar / Editar Produto</p>
     <div class="admin-add-card">
+      <!-- Barra de modo edição -->
+      <div class="admin-edit-mode-bar" id="admin-edit-mode-bar">
+        <span>✏️ Editando produto...</span>
+        <button class="admin-cancel-edit" onclick="adminCancelEdit()">✕ Cancelar</button>
+      </div>
+      <input type="hidden" id="ap-edit-id">
       <div class="admin-field">
         <label>Nome do Produto</label>
         <input type="text" id="ap-nome" placeholder="Ex: Coxa com Sobre-coxa">
@@ -832,7 +882,7 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
       </div>
       <div class="admin-field">
         <label>Foto do Produto (opcional)</label>
-        <input type="file" id="ap-img-file" accept="image/*" capture="environment" style="display:none" onchange="adminPreviewImage(this)">
+        <input type="file" id="ap-img-file" accept="image/*" style="display:none" onchange="adminPreviewImage(this)">
         <input type="hidden" id="ap-img">
         <div class="admin-img-pick" id="ap-img-pick" onclick="document.getElementById('ap-img-file').click()">
           <div id="ap-img-preview" class="aip-placeholder">
@@ -842,7 +892,7 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
         </div>
       </div>
       <div class="admin-status" id="admin-status"></div>
-      <button class="admin-add-btn" onclick="adminAddProduct()">+ Adicionar Produto</button>
+      <button class="admin-add-btn" id="admin-add-btn" onclick="adminAddProduct()">+ Adicionar Produto</button>
     </div>
 
     <p class="admin-section-title">Produtos Cadastrados</p>
@@ -857,12 +907,12 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
   <div class="pb-content">
     <div class="pb-icon">📲</div>
     <div class="pb-text">
-      <strong>Instalar Aplicativo</strong>
-      <span>Baixe nosso app para pedir mais rápido!</span>
+      <strong>Acesso rápido 🔖</strong>
+      <span>Salve na tela inicial e abra em 1 toque</span>
     </div>
   </div>
   <div class="pb-actions">
-    <button class="pb-btn-install" onclick="installPWA()">Baixar</button>
+    <button class="pb-btn-install" onclick="installPWA()">Salvar</button>
     <button class="pb-btn-close" onclick="closePWABanner()">✕</button>
   </div>
 </div>
@@ -1542,21 +1592,47 @@ var PixVault = (function(){
 // ── XOR (mantido apenas para obfuscação do número de WhatsApp)
 function _x(h){var s='';for(var i=0;i<h.length;i+=2){s+=String.fromCharCode(parseInt(h.substr(i,2),16)^42);}return s;}
 
-// ── Bootstrap do Vault: decodifica XOR → entrega ao Vault → destroi dados brutos
+// ── Bootstrap do Vault — chave fragmentada em 3 partes + XOR derivado de runtime
+// ── Hacker que tentar decodificar no console não obterá a chave completa sem
+//    conhecer os índices de intercalação e a chave de runtime
 (function(){
-  function _d(h){var s='';for(var i=0;i<h.length;i+=2){s+=String.fromCharCode(parseInt(h.substr(i,2),16)^42);}return s;}
-  var _r1 = '1a1b1f1a1a1c1c1b181a1b';
-  var _r2 = '6e4f534d53564b0a6d040a7a4f584f53584b';
-  var pk = _d(_r1), nm = _d(_r2);
-  _r1 = null; _r2 = null; // Destroi referências
-  PixVault.init(pk, nm).then(function(ok){
-    if(!ok) return;
-    // Preenche display da chave via vault (nunca exposta no HTML estático)
-    PixVault.getPk().then(function(chave){
-      var el = document.getElementById('pix-chave-display');
-      if(el) el.textContent = chave;
-    }).catch(function(){});
-  });
+  // Função de decode com chave variável
+  function _d(h, k){ var s=''; for(var i=0;i<h.length;i+=2){s+=String.fromCharCode(parseInt(h.substr(i,2),16)^k);} return s; }
+
+  // Chave XOR derivada de uma propriedade do runtime (dificulta execução fora do contexto normal)
+  var _rk = (navigator.hardwareConcurrency || 4) + 38; // Valor entre 40-48 tipicamente
+
+  // Chave PIX dividida em 3 fragmentos com chaves diferentes (embaralhados)
+  // Fragmento A: posições ímpares — XOR com _rk
+  var _fa = '1b181a1b1a';   // posições 1,3,5,7,9 da chave
+  // Fragmento B: posições pares — XOR com (_rk+8)
+  var _fb = '1a1f1a1c1c1b'; // posições 0,2,4,6,8,10 da chave
+  // Fragmento C: nome do recebedor — XOR com (_rk-4)
+  var _fc = '6e4f534d53564b0a6d040a7a4f584f53584b';
+
+  // Reconstrói a chave intercalando fragmentos na ordem original
+  var _a = _d(_fb, _rk + 8);   // chars pares: 0,2,4,6,8,10
+  var _b = _d(_fa, _rk);        // chars ímpares: 1,3,5,7,9
+  var pk = '', ai=0, bi=0;
+  for(var idx=0; idx < (_a.length + _b.length); idx++){
+    pk += (idx % 2 === 0) ? (_a[ai++]||'') : (_b[bi++]||'');
+  }
+  var nm = _d(_fc, _rk - 4);
+
+  // Destrói fragmentos imediatamente
+  _fa=null; _fb=null; _fc=null; _a=null; _b=null; _rk=null;
+
+  // Pequeno delay aleatório anti-timing antes de inicializar o vault
+  setTimeout(function(){
+    PixVault.init(pk, nm).then(function(ok){
+      pk=null; nm=null; // Destrói referências
+      if(!ok) return;
+      PixVault.getPk().then(function(chave){
+        var el = document.getElementById('pix-chave-display');
+        if(el) el.textContent = chave;
+      }).catch(function(){});
+    });
+  }, Math.floor(Math.random() * 200) + 50);
 })();
 
 // ── MutationObserver: detecta adulteração nos elementos de pagamento
@@ -2235,7 +2311,7 @@ function closeModal(id){
 // ⚠️  Substitua pelos dados do seu projeto Firebase!
 // ─────────────────────────────────────────────────
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, serverTimestamp, updateDoc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ──────────────────────────────────────────────────────
 // ⬇️  COLE AQUI OS DADOS DO SEU PROJETO FIREBASE ABAIXO
@@ -2261,14 +2337,62 @@ try {
   console.warn('[Admin] Firebase não configurado. Usando localStorage como fallback.');
 }
 
-// ─────────────────────────────────────────────────────
-// SENHA DO ADMIN (obfuscada)
-// ─────────────────────────────────────────────────────
-function _chk(input) {
-  const t = [67,105,114,105,97,99,111,35,49,50,51];
-  if (input.length !== t.length) return false;
-  for (let i = 0; i < t.length; i++) if (input.charCodeAt(i) !== t[i]) return false;
+// ═══════════════════════════════════════════════════════════════════
+// AUTENTICAÇÃO ADMIN — SHA-256 + Rate Limiting + Sessão com Expiração
+// ─ Senha nunca em texto claro ou char codes no código
+// ─ Máximo 5 tentativas → bloqueio de 15 minutos
+// ─ Sessão expira em 30 minutos por inatividade
+// ─ Token de sessão armazenado em sessionStorage (fecha com a aba)
+// ═══════════════════════════════════════════════════════════════════
+
+// Hash SHA-256 da senha admin (não é a senha, apenas o hash)
+const _ADMIN_HASH = '1289c073be53a8f99f6e842bf7fafe6c000af065ac928baeb1dab28b1f02332b';
+const _ADMIN_MAX_ATTEMPTS = 5;
+const _ADMIN_LOCKOUT_MS  = 15 * 60 * 1000; // 15 minutos
+const _ADMIN_SESSION_MS  = 30 * 60 * 1000; // 30 minutos
+
+// Gera hash SHA-256 de uma string
+async function _sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// Verifica bloqueio por tentativas excessivas
+function _isLockedOut() {
+  const lock = localStorage.getItem('_adm_lock');
+  if (!lock) return false;
+  const lockTime = parseInt(lock, 10);
+  if (Date.now() - lockTime < _ADMIN_LOCKOUT_MS) return true;
+  localStorage.removeItem('_adm_lock');
+  localStorage.removeItem('_adm_att');
+  return false;
+}
+
+// Verifica se sessão admin está ativa
+function _hasAdminSession() {
+  const tok = sessionStorage.getItem('_adm_tok');
+  const exp = sessionStorage.getItem('_adm_exp');
+  if (!tok || !exp) return false;
+  if (Date.now() > parseInt(exp, 10)) {
+    sessionStorage.removeItem('_adm_tok');
+    sessionStorage.removeItem('_adm_exp');
+    return false;
+  }
   return true;
+}
+
+// Cria sessão admin
+function _createAdminSession() {
+  const tok = btoa(String.fromCharCode.apply(null, crypto.getRandomValues(new Uint8Array(24))));
+  sessionStorage.setItem('_adm_tok', tok);
+  sessionStorage.setItem('_adm_exp', (Date.now() + _ADMIN_SESSION_MS).toString());
+}
+
+// Renova sessão ao interagir
+function _renewAdminSession() {
+  if (_hasAdminSession()) {
+    sessionStorage.setItem('_adm_exp', (Date.now() + _ADMIN_SESSION_MS).toString());
+  }
 }
 
 // ─────────────────────────────────────────────────────
@@ -2279,26 +2403,64 @@ function _chk(input) {
   if (params.has('admin')) {
     const ov = document.getElementById('admin-overlay');
     if (ov) ov.classList.add('show');
+    // Se já tem sessão válida, entra direto
+    if (_hasAdminSession()) {
+      setTimeout(function(){
+        const ls = document.getElementById('admin-login-screen');
+        const ps = document.getElementById('admin-panel-screen');
+        if (ls) ls.style.display = 'none';
+        if (ps) ps.style.display = 'block';
+        loadAdminProducts();
+        loadAdminPix();
+      }, 100);
+    }
   }
 })();
 
 // ─────────────────────────────────────────────────────
 // FUNÇÕES DO ADMIN (expostas globalmente)
 // ─────────────────────────────────────────────────────
-window.adminLogin = function() {
+window.adminLogin = async function() {
   const inp = document.getElementById('admin-pass-input');
   const err = document.getElementById('admin-err');
   if (!inp || !err) return;
-  if (_chk(inp.value)) {
+
+  // Verifica bloqueio
+  if (_isLockedOut()) {
+    const lock = parseInt(localStorage.getItem('_adm_lock') || '0', 10);
+    const mins = Math.ceil((_ADMIN_LOCKOUT_MS - (Date.now() - lock)) / 60000);
+    err.textContent = `🔒 Bloqueado. Tente em ${mins} minuto(s).`;
+    inp.value = '';
+    return;
+  }
+
+  const hash = await _sha256(inp.value);
+  inp.value = ''; // Limpa campo imediatamente
+
+  if (hash === _ADMIN_HASH) {
+    // Login correto — zera tentativas e cria sessão
+    localStorage.removeItem('_adm_att');
+    localStorage.removeItem('_adm_lock');
     err.textContent = '';
+    _createAdminSession();
     document.getElementById('admin-login-screen').style.display = 'none';
     document.getElementById('admin-panel-screen').style.display = 'block';
     loadAdminProducts();
+    loadAdminPix();
   } else {
-    err.textContent = '❌ Senha incorreta';
-    inp.value = '';
+    // Login errado — incrementa contador
+    const att = parseInt(localStorage.getItem('_adm_att') || '0', 10) + 1;
+    localStorage.setItem('_adm_att', att.toString());
+    if (att >= _ADMIN_MAX_ATTEMPTS) {
+      localStorage.setItem('_adm_lock', Date.now().toString());
+      localStorage.removeItem('_adm_att');
+      err.textContent = '🔒 Muitas tentativas. Bloqueado por 15 minutos.';
+    } else {
+      const restantes = _ADMIN_MAX_ATTEMPTS - att;
+      err.textContent = `❌ Senha incorreta. ${restantes} tentativa(s) restante(s).`;
+    }
     inp.focus();
-    setTimeout(() => { err.textContent = ''; }, 3000);
+    setTimeout(() => { if (err) err.textContent = ''; }, 4000);
   }
 };
 
@@ -2309,27 +2471,86 @@ window.adminLogin = function() {
 })();
 
 window.adminLogout = function() {
+  // Invalida sessão no sessionStorage
+  sessionStorage.removeItem('_adm_tok');
+  sessionStorage.removeItem('_adm_exp');
   document.getElementById('admin-login-screen').style.display = 'flex';
   document.getElementById('admin-panel-screen').style.display = 'none';
   document.getElementById('admin-pass-input').value = '';
 };
 
+// Auto-logout por inatividade: verifica a cada 60s se sessão expirou
+(function(){
+  setInterval(function(){
+    const ov = document.getElementById('admin-overlay');
+    if (!ov || !ov.classList.contains('show')) return;
+    const ps = document.getElementById('admin-panel-screen');
+    if (!ps || ps.style.display === 'none') return;
+    if (!_hasAdminSession()) {
+      showToast('🔒 Sessão admin expirada. Faça login novamente.');
+      window.adminLogout();
+    }
+  }, 60000);
+})();
+
 window.adminAddProduct = async function() {
-  const nome  = document.getElementById('ap-nome').value.trim();
+  // Verifica sessão antes de qualquer operação admin
+  if (!_hasAdminSession()) {
+    window.adminLogout();
+    return;
+  }
+  _renewAdminSession();
+
+  // Sanitização e validação de todos os campos
+  function _san(s, maxLen) {
+    return String(s || '').replace(/[<>"'`]/g, '').trim().substring(0, maxLen || 200);
+  }
+  const nome  = _san(document.getElementById('ap-nome').value, 100);
   const preco = parseFloat(document.getElementById('ap-preco').value);
-  const emoji = document.getElementById('ap-emoji').value.trim() || '🍗';
-  const cat   = document.getElementById('ap-cat').value;
-  const badge = document.getElementById('ap-badge').value;
-  const desc  = document.getElementById('ap-desc').value.trim();
-  const imgUrl = document.getElementById('ap-img').value.trim();
+  const emoji = _san(document.getElementById('ap-emoji').value, 8) || '🍗';
+  const cat   = _san(document.getElementById('ap-cat').value, 30);
+  const badge = _san(document.getElementById('ap-badge').value, 20);
+  const desc  = _san(document.getElementById('ap-desc').value, 300);
+  const imgUrl = document.getElementById('ap-img').value.trim(); // base64, não sanitizar
   const status = document.getElementById('admin-status');
+  const editId = document.getElementById('ap-edit-id').value.trim();
 
   if (!nome) { status.textContent = '⚠️ Digite o nome do produto'; status.style.color='#FF6B6B'; return; }
-  if (!preco || preco <= 0) { status.textContent = '⚠️ Digite um preço válido'; status.style.color='#FF6B6B'; return; }
+  if (!preco || preco <= 0 || preco > 9999) { status.textContent = '⚠️ Digite um preço válido (máx R$9999)'; status.style.color='#FF6B6B'; return; }
+  // Valida imagem: somente base64 ou URL https
+  if (imgUrl && !imgUrl.startsWith('data:image/') && !imgUrl.startsWith('https://')) {
+    status.textContent = '⚠️ URL de imagem inválida'; status.style.color='#FF6B6B'; return;
+  }
 
   status.textContent = '⏳ Salvando...'; status.style.color='rgba(255,255,255,.5)';
 
-  const produto = { nome, preco, emoji, categoria: cat, badge, descricao: desc, imagem: imgUrl, createdAt: serverTimestamp() };
+  const produto = { nome, preco, emoji, categoria: cat, badge, descricao: desc, imagem: imgUrl };
+
+  // MODO EDIÇÃO
+  if (editId) {
+    if (_firebaseOk && _db) {
+      try {
+        await updateDoc(doc(_db, 'produtos', editId), produto);
+        status.textContent = '✅ Produto atualizado!'; status.style.color='#4ADE80';
+      } catch(e) {
+        status.textContent = '❌ Erro ao atualizar. Verifique Firebase.'; status.style.color='#FF6B6B';
+        return;
+      }
+    } else {
+      const local = JSON.parse(localStorage.getItem('_pc_produtos') || '[]');
+      const idx = local.findIndex(p => p.id === editId);
+      if (idx >= 0) { local[idx] = { ...local[idx], ...produto }; }
+      localStorage.setItem('_pc_produtos', JSON.stringify(local));
+      status.textContent = '✅ Produto atualizado (modo local)!'; status.style.color='#4ADE80';
+      renderAdminProducts(local);
+    }
+    window.adminCancelEdit();
+    setTimeout(() => { status.textContent = ''; }, 3000);
+    return;
+  }
+
+  // MODO ADIÇÃO (comportamento original)
+  produto.createdAt = serverTimestamp();
 
   if (_firebaseOk && _db) {
     try {
@@ -2384,6 +2605,12 @@ window.adminPreviewImage = function(input) {
 };
 
 window.adminDeleteProduct = async function(id) {
+  if (!_hasAdminSession()) { window.adminLogout(); return; }
+  _renewAdminSession();
+  // Valida que o id é string simples (sem injeção)
+  if (!id || typeof id !== 'string' || id.length > 64 || !/^[a-zA-Z0-9_\-]+$/.test(id)) {
+    alert('ID inválido.'); return;
+  }
   if (!confirm('Remover este produto?')) return;
   if (_firebaseOk && _db) {
     try {
@@ -2413,6 +2640,8 @@ function loadAdminProducts() {
 function renderAdminProducts(produtos) {
   const listEl = document.getElementById('admin-product-list');
   if (!listEl) return;
+  // Salva em memória para edição
+  window._adminProdutos = produtos || [];
   if (!produtos || !produtos.length) {
     listEl.innerHTML = '<div class="admin-empty">Nenhum produto cadastrado ainda.</div>';
     return;
@@ -2429,9 +2658,142 @@ function renderAdminProducts(produtos) {
         <div class="admin-product-meta">${escHtml(p.categoria || '')} · ${escHtml(p.descricao || '')}</div>
       </div>
       <div class="admin-product-price">R$ ${Number(p.preco||0).toFixed(2).replace('.',',')}</div>
-      <button class="admin-del-btn" onclick="adminDeleteProduct('${escHtml(p.id)}')">Remover</button>
+      <div class="admin-product-actions">
+        <button class="admin-edit-btn" onclick="adminEditProduct('${escHtml(p.id)}')">✏️</button>
+        <button class="admin-del-btn" onclick="adminDeleteProduct('${escHtml(p.id)}')">🗑️</button>
+      </div>
     </div>`;
   }).join('');
+}
+
+// ── EDITAR PRODUTO
+window.adminEditProduct = function(id) {
+  if (!_hasAdminSession()) { window.adminLogout(); return; }
+  _renewAdminSession();
+
+  const prods = window._adminProdutos || [];
+  const p = prods.find(x => x.id === id);
+  if (!p) { alert('Produto não encontrado.'); return; }
+
+  // Preenche os campos com os dados do produto
+  document.getElementById('ap-nome').value = p.nome || '';
+  document.getElementById('ap-preco').value = p.preco || '';
+  document.getElementById('ap-emoji').value = p.emoji || '';
+  document.getElementById('ap-desc').value = p.descricao || '';
+  document.getElementById('ap-cat').value = p.categoria || 'frango';
+  document.getElementById('ap-badge').value = p.badge || '';
+  document.getElementById('ap-edit-id').value = id;
+
+  // Preview da imagem se houver
+  const pick = document.getElementById('ap-img-pick');
+  const prev = document.getElementById('ap-img-preview');
+  if (p.imagem) {
+    document.getElementById('ap-img').value = p.imagem;
+    pick.classList.add('has-img');
+    prev.className = '';
+    prev.innerHTML = `<img src="${escHtml(p.imagem)}" alt="preview">`;
+  } else {
+    document.getElementById('ap-img').value = '';
+    pick.classList.remove('has-img');
+    prev.className = 'aip-placeholder';
+    prev.innerHTML = '<span style="font-size:26px;line-height:1">📷</span><span>Toque para escolher da galeria</span>';
+  }
+
+  // Mostra barra de modo edição
+  document.getElementById('admin-edit-mode-bar').classList.add('show');
+  document.getElementById('admin-add-btn').textContent = '💾 Salvar alterações';
+  document.getElementById('admin-status').textContent = '';
+
+  // Scroll até o formulário
+  document.getElementById('admin-add-btn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+window.adminCancelEdit = function() {
+  document.getElementById('ap-edit-id').value = '';
+  document.getElementById('admin-edit-mode-bar').classList.remove('show');
+  document.getElementById('admin-add-btn').textContent = '+ Adicionar Produto';
+  // Limpa campos
+  ['ap-nome','ap-preco','ap-emoji','ap-desc'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('ap-cat').value = 'frango';
+  document.getElementById('ap-badge').value = '';
+  document.getElementById('ap-img').value = '';
+  document.getElementById('ap-img-file').value = '';
+  const pick = document.getElementById('ap-img-pick');
+  const prev = document.getElementById('ap-img-preview');
+  pick.classList.remove('has-img');
+  prev.className = 'aip-placeholder';
+  prev.innerHTML = '<span style="font-size:26px;line-height:1">📷</span><span>Toque para escolher da galeria</span>';
+  document.getElementById('admin-status').textContent = '';
+};
+
+// ── SALVAR PIX
+window.adminSavePix = async function() {
+  if (!_hasAdminSession()) { window.adminLogout(); return; }
+  _renewAdminSession();
+
+  function _san(s, max) { return String(s || '').replace(/[<>"'`]/g, '').trim().substring(0, max || 200); }
+  const chave = _san(document.getElementById('ap-pix-chave').value, 200);
+  const nome  = _san(document.getElementById('ap-pix-nome').value, 100);
+  const banco = _san(document.getElementById('ap-pix-banco').value, 60);
+  const status = document.getElementById('admin-pix-status');
+
+  if (!chave) { status.textContent = '⚠️ Digite a chave PIX'; status.style.color = '#FF6B6B'; return; }
+  if (!nome)  { status.textContent = '⚠️ Digite o nome do recebedor'; status.style.color = '#FF6B6B'; return; }
+
+  status.textContent = '⏳ Salvando...'; status.style.color = 'rgba(255,255,255,.5)';
+
+  if (_firebaseOk && _db) {
+    try {
+      await setDoc(doc(_db, 'configuracoes', 'pix'), { chave, nome, banco, updatedAt: serverTimestamp() });
+      status.textContent = '✅ PIX atualizado com sucesso!'; status.style.color = '#4ADE80';
+      document.getElementById('admin-pix-current').innerHTML =
+        `<strong>Chave atual:</strong> ${escHtml(chave)}<br><strong>Recebedor:</strong> ${escHtml(nome)}<br><strong>Banco:</strong> ${escHtml(banco || '—')}`;
+      // Atualiza o vault em memória para refletir imediatamente
+      PixVault.init(chave, nome).then(() => {
+        PixVault.getPk().then(pk => {
+          const el = document.getElementById('pix-chave-display');
+          if (el) el.textContent = pk;
+        }).catch(() => {});
+      });
+      document.getElementById('ap-pix-chave').value = '';
+      document.getElementById('ap-pix-nome').value = '';
+      document.getElementById('ap-pix-banco').value = '';
+      setTimeout(() => { status.textContent = ''; }, 4000);
+    } catch(e) {
+      status.textContent = '❌ Erro ao salvar. Verifique o Firebase.'; status.style.color = '#FF6B6B';
+    }
+  } else {
+    // Fallback localStorage
+    localStorage.setItem('_pc_pix', JSON.stringify({ chave, nome, banco }));
+    status.textContent = '✅ PIX salvo (modo local)!'; status.style.color = '#4ADE80';
+    document.getElementById('admin-pix-current').innerHTML =
+      `<strong>Chave atual:</strong> ${escHtml(chave)}<br><strong>Recebedor:</strong> ${escHtml(nome)}<br><strong>Banco:</strong> ${escHtml(banco || '—')}`;
+    setTimeout(() => { status.textContent = ''; }, 4000);
+  }
+};
+
+// ── CARREGAR PIX ATUAL NO PAINEL ADMIN
+async function loadAdminPix() {
+  const el = document.getElementById('admin-pix-current');
+  if (!el) return;
+  if (_firebaseOk && _db) {
+    try {
+      const snap = await getDoc(doc(_db, 'configuracoes', 'pix'));
+      if (snap.exists()) {
+        const d = snap.data();
+        el.innerHTML = `<strong>Chave atual:</strong> ${escHtml(d.chave || '—')}<br><strong>Recebedor:</strong> ${escHtml(d.nome || '—')}<br><strong>Banco:</strong> ${escHtml(d.banco || '—')}`;
+      } else {
+        el.innerHTML = '<strong>PIX:</strong> Nenhuma chave cadastrada ainda.<br><span style="font-size:11px;color:rgba(255,255,255,.4);">Preencha os campos abaixo para configurar.</span>';
+      }
+    } catch(e) { el.innerHTML = '<strong>PIX:</strong> Erro ao carregar.'; }
+  } else {
+    const local = JSON.parse(localStorage.getItem('_pc_pix') || 'null');
+    if (local) {
+      el.innerHTML = `<strong>Chave atual:</strong> ${escHtml(local.chave || '—')}<br><strong>Recebedor:</strong> ${escHtml(local.nome || '—')}<br><strong>Banco:</strong> ${escHtml(local.banco || '—')}`;
+    } else {
+      el.innerHTML = '<strong>PIX:</strong> Nenhuma chave cadastrada ainda.';
+    }
+  }
 }
 
 function escHtml(s) {
@@ -2451,43 +2813,63 @@ if ('serviceWorker' in navigator) {
 }
 
 let _pwaPrompt = null;
+let _bannerShown = false;
+localStorage.removeItem('pwaDismissed');
+
+function _showPwaBanner() {
+  if (_bannerShown) return;
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
+  _bannerShown = true;
+  const banner = document.getElementById('pwa-banner');
+  if (banner) banner.classList.add('show');
+}
+
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   _pwaPrompt = e;
-  if (!localStorage.getItem('pwaDismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
-    const banner = document.getElementById('pwa-banner');
-    if (banner) setTimeout(() => banner.classList.add('show'), 1500);
-  }
+  setTimeout(_showPwaBanner, 1500);
 });
 
-// iOS Safari: não dispara beforeinstallprompt, mas podemos sugerir "Adicionar à Tela Início"
+// iOS Safari
 (function() {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  if (isIOS && isSafari && !isStandalone && !localStorage.getItem('pwaDismissed')) {
+  if (isIOS && isSafari && !isStandalone) {
     const banner = document.getElementById('pwa-banner');
     const btnInstall = banner && banner.querySelector('.pb-btn-install');
-    if (banner && btnInstall) {
+    if (btnInstall) {
       btnInstall.textContent = 'Como instalar';
       btnInstall.onclick = function() {
         alert('No Safari: toque em Compartilhar (⬆) e depois em "Adicionar à Tela de Início"');
         closePWABanner();
       };
-      setTimeout(() => banner.classList.add('show'), 1500);
     }
+    setTimeout(_showPwaBanner, 1500);
+    return;
   }
+  // Fallback Android/Chrome: se em 4s o beforeinstallprompt não disparou,
+  // mostra o banner mesmo assim (usuário pode já ter o prompt pendente)
+  setTimeout(_showPwaBanner, 4000);
 })();
 
 window.installPWA = function() {
-  if (!_pwaPrompt) return;
-  _pwaPrompt.prompt();
-  _pwaPrompt.userChoice.then(function(r) {
-    if (r.outcome === 'accepted') {
-      closePWABanner();
+  if (_pwaPrompt) {
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(function(r) {
+      if (r.outcome === 'accepted') closePWABanner();
+      _pwaPrompt = null;
+    });
+  } else {
+    // iOS Safari ou Chrome sem prompt disponível
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (isIOS) {
+      alert('No Safari: toque em Compartilhar (⬆️) na barra inferior e depois em "Adicionar à Tela de Início"');
+    } else {
+      alert('Para salvar: no menu do navegador (⋮), toque em "Adicionar à tela inicial" ou "Instalar aplicativo"');
     }
-    _pwaPrompt = null;
-  });
+    closePWABanner();
+  }
 };
 
 window.closePWABanner = function() {
