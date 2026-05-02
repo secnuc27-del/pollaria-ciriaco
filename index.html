@@ -593,6 +593,69 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
   color:rgba(255,255,255,.5);font-size:12px;font-weight:600;letter-spacing:.5px;padding:16px;}
 .admin-img-pick img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;display:block;}
 
+/* ── ABAS DO ADMIN ── */
+.admin-tabs{display:flex;gap:0;margin-bottom:24px;background:rgba(255,255,255,.04);border-radius:14px;padding:4px;}
+.admin-tab-btn{flex:1;padding:11px 6px;background:none;border:none;color:rgba(255,255,255,.4);font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;border-radius:10px;transition:all .25s;text-transform:uppercase;}
+.admin-tab-btn.active{background:linear-gradient(135deg,var(--ember),var(--flame));color:#fff;box-shadow:0 4px 14px rgba(212,80,10,.4);}
+.admin-tab-content{display:none;}
+.admin-tab-content.active{display:block;}
+
+/* ── CARD DE PRODUTO ESTILO CLIENTE (admin) ── */
+.adm-prod-card{background:var(--glass);border:1px solid rgba(255,255,255,.08);border-radius:20px;margin-bottom:10px;overflow:hidden;transition:border-color .25s;}
+.adm-prod-card.editing{border-color:rgba(100,160,255,.4);}
+.adm-prod-main{display:flex;align-items:center;gap:12px;padding:14px 16px;}
+.adm-prod-ic{width:50px;height:50px;border-radius:13px;flex-shrink:0;background:linear-gradient(135deg,rgba(212,80,10,.2),rgba(200,145,42,.1));display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;}
+.adm-prod-ic img{width:100%;height:100%;object-fit:cover;}
+.adm-prod-info{flex:1;min-width:0;}
+.adm-prod-name{font-size:15px;font-weight:600;color:#fff;margin-bottom:1px;}
+.adm-prod-price{font-size:12px;color:var(--flame);font-weight:600;}
+.adm-prod-acts{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.adm-edit-ic-btn{width:36px;height:36px;border-radius:10px;border:1px solid rgba(100,160,255,.3);background:rgba(100,160,255,.1);color:#7BB8FF;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.adm-del-ic-btn{width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,80,80,.25);background:rgba(255,80,80,.1);color:#FF6B6B;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.adm-edit-form{display:none;padding:0 16px 16px;border-top:1px solid rgba(255,255,255,.06);margin-top:0;}
+.adm-prod-card.editing .adm-edit-form{display:block;}
+.adm-edit-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.adm-edit-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin:12px 0 5px;display:block;}
+.adm-edit-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;outline:none;box-sizing:border-box;transition:border-color .2s;}
+.adm-edit-input:focus{border-color:rgba(212,80,10,.6);}
+.adm-edit-input::placeholder{color:rgba(255,255,255,.3);}
+.adm-edit-btns{display:flex;gap:8px;margin-top:14px;}
+.adm-save-btn{flex:1;padding:12px;border-radius:100px;border:none;background:linear-gradient(135deg,#D4500A,#F07020);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.adm-cancel-btn{padding:12px 18px;border-radius:100px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;}
+.adm-add-trigger{width:100%;padding:16px;border-radius:16px;border:2px dashed rgba(212,80,10,.35);background:rgba(212,80,10,.06);color:var(--flame);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;transition:all .2s;}
+.adm-add-trigger:active{background:rgba(212,80,10,.12);}
+.adm-add-form-wrap{display:none;background:rgba(212,80,10,.06);border:1px solid rgba(212,80,10,.2);border-radius:20px;padding:18px;margin-top:10px;}
+.adm-add-form-wrap.show{display:block;}
+
+/* ── ABA LOCALIZAÇÃO (admin) ── */
+.adm-city-wrap{margin-bottom:20px;}
+.adm-city-card{border-radius:18px;overflow:visible;border:2px solid rgba(255,255,255,.1);background:var(--glass);text-align:center;transition:all .2s;margin-bottom:12px;}
+.adm-city-top{display:flex;align-items:center;}
+.adm-city-bg{height:70px;width:80px;display:flex;align-items:center;justify-content:center;font-size:38px;flex-shrink:0;border-radius:16px 0 0 0;}
+.adm-city-brasileia .adm-city-bg{background:linear-gradient(135deg,#1a3a2a,#0d2218);}
+.adm-city-epitacio .adm-city-bg{background:linear-gradient(135deg,#1a2a3a,#0d1822);}
+.adm-city-meta{flex:1;padding:0 14px;text-align:left;}
+.adm-city-name-txt{font-size:14px;font-weight:700;color:#fff;}
+.adm-city-fee-txt{font-size:13px;color:var(--flame);font-weight:600;margin-top:2px;}
+.adm-city-edit-toggle{padding:8px 14px;border-radius:10px;border:1px solid rgba(100,160,255,.3);background:rgba(100,160,255,.1);color:#7BB8FF;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-right:12px;white-space:nowrap;}
+.adm-city-fee-form{display:none;padding:14px 14px 14px;border-top:1px solid rgba(255,255,255,.06);}
+.adm-city-card.editing-fee .adm-city-fee-form{display:block;}
+.adm-fee-save-btn{flex:1;padding:12px;border-radius:100px;border:none;background:linear-gradient(135deg,#D4500A,#F07020);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.adm-fee-cancel-btn{padding:12px 16px;border-radius:100px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;}
+
+/* ── ABA PIX (admin) ── */
+.adm-pix-preview{background:rgba(37,211,102,.06);border:1px solid rgba(37,211,102,.2);border-radius:20px;padding:20px;margin-bottom:16px;}
+.adm-pix-preview-title{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#4ADE80;margin-bottom:14px;}
+.adm-pix-preview-chave{font-size:16px;font-weight:700;color:#fff;background:rgba(0,0,0,.2);border-radius:10px;padding:12px 14px;margin-bottom:6px;word-break:break-all;}
+.adm-pix-preview-nome{font-size:13px;color:rgba(255,255,255,.6);}
+.adm-pix-qr-wrap{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border-radius:14px;padding:16px;margin:12px 0;}
+.adm-pix-qr-wrap img{max-width:140px;border-radius:8px;}
+.adm-pix-qr-placeholder{width:120px;height:120px;background:rgba(255,255,255,.06);border:2px dashed rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.3);text-align:center;padding:10px;}
+.adm-pix-edit-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px;}
+.adm-pix-edit-title{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--flame);margin-bottom:14px;}
+.adm-pix-qr-pick{width:100%;min-height:70px;border-radius:12px;border:2px dashed rgba(37,211,102,.35);background:rgba(37,211,102,.05);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:rgba(37,211,102,.7);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;transition:all .2s;}
+.adm-pix-qr-pick.has-img{border-style:solid;min-height:110px;}
+
 /* PWA BANNER NATIVO */
 .pwa-banner{
   position:fixed;top:-100px;left:50%;transform:translateX(-50%);
@@ -814,93 +877,178 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
       <button class="admin-logout" onclick="adminLogout()">Sair</button>
     </div>
 
-    <!-- SEÇÃO: PIX -->
-    <p class="admin-section-title">💰 Chave PIX</p>
-    <div class="admin-pix-card">
-      <div class="admin-pix-current" id="admin-pix-current">
-        <strong>Carregando dados do PIX...</strong>
-      </div>
-      <div class="admin-field">
-        <label>Nova Chave PIX</label>
-        <input type="text" id="ap-pix-chave" placeholder="Ex: 68999999999 ou email@gmail.com">
-      </div>
-      <div class="admin-field">
-        <label>Nome do Recebedor</label>
-        <input type="text" id="ap-pix-nome" placeholder="Ex: Deigila C. Pereira">
-      </div>
-      <div class="admin-field">
-        <label>Banco (opcional)</label>
-        <input type="text" id="ap-pix-banco" placeholder="Ex: Nubank, Bradesco, Caixa...">
-      </div>
-      <div class="admin-pix-status" id="admin-pix-status"></div>
-      <button class="admin-pix-save-btn" onclick="adminSavePix()">💾 Salvar dados do PIX</button>
+    <!-- ABAS -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" onclick="adminSwitchTab('produtos',this)">🍗 Produtos</button>
+      <button class="admin-tab-btn" onclick="adminSwitchTab('localizacao',this)">📍 Entrega</button>
+      <button class="admin-tab-btn" onclick="adminSwitchTab('pix',this)">💰 PIX</button>
     </div>
 
-    <p class="admin-section-title">Adicionar / Editar Produto</p>
-    <div class="admin-add-card">
-      <!-- Barra de modo edição -->
-      <div class="admin-edit-mode-bar" id="admin-edit-mode-bar">
-        <span>✏️ Editando produto...</span>
-        <button class="admin-cancel-edit" onclick="adminCancelEdit()">✕ Cancelar</button>
+    <!-- ══ ABA 1: PRODUTOS ══ -->
+    <div class="admin-tab-content active" id="adm-tab-produtos">
+      <div id="admin-product-list" style="margin-bottom:14px;">
+        <div class="admin-empty">Carregando produtos...</div>
       </div>
-      <input type="hidden" id="ap-edit-id">
-      <div class="admin-field">
-        <label>Nome do Produto</label>
-        <input type="text" id="ap-nome" placeholder="Ex: Coxa com Sobre-coxa">
-      </div>
-      <div class="admin-row">
+
+      <!-- Botão Adicionar Produto -->
+      <button class="adm-add-trigger" onclick="adminToggleAddForm()">
+        <span style="font-size:20px">＋</span> Adicionar novo produto
+      </button>
+
+      <!-- Formulário de adição (oculto inicialmente) -->
+      <div class="adm-add-form-wrap" id="adm-add-form-wrap">
+        <p class="admin-section-title" style="margin-bottom:14px;">✏️ Novo Produto</p>
+        <input type="hidden" id="ap-edit-id">
         <div class="admin-field">
-          <label>Preço (R$)</label>
-          <input type="number" id="ap-preco" placeholder="0.00" step="0.50" min="0">
+          <label>Nome do Produto</label>
+          <input type="text" id="ap-nome" placeholder="Ex: Coxa com Sobre-coxa">
+        </div>
+        <div class="admin-row">
+          <div class="admin-field">
+            <label>Preço (R$)</label>
+            <input type="number" id="ap-preco" placeholder="0.00" step="0.50" min="0">
+          </div>
+          <div class="admin-field">
+            <label>Emoji / Ícone</label>
+            <input type="text" id="ap-emoji" placeholder="🍗" maxlength="4">
+          </div>
+        </div>
+        <div class="admin-row">
+          <div class="admin-field">
+            <label>Categoria</label>
+            <select id="ap-cat">
+              <option value="frango">🍗 Frango</option>
+              <option value="acompanhamento">🍟 Acompanhamento</option>
+              <option value="bebida">🥤 Bebida</option>
+            </select>
+          </div>
+          <div class="admin-field">
+            <label>Badge</label>
+            <select id="ap-badge">
+              <option value="">Nenhum</option>
+              <option value="hot">🔥 Hot</option>
+              <option value="new">✨ Novo</option>
+            </select>
+          </div>
         </div>
         <div class="admin-field">
-          <label>Emoji / Ícone</label>
-          <input type="text" id="ap-emoji" placeholder="🍗" maxlength="4">
-        </div>
-      </div>
-      <div class="admin-row">
-        <div class="admin-field">
-          <label>Categoria</label>
-          <select id="ap-cat">
-            <option value="frango">🍗 Frango</option>
-            <option value="acompanhamento">🍟 Acompanhamento</option>
-            <option value="bebida">🥤 Bebida</option>
-          </select>
+          <label>Descrição (opcional)</label>
+          <input type="text" id="ap-desc" placeholder="Ex: Crocante por fora, suculento por dentro">
         </div>
         <div class="admin-field">
-          <label>Badge</label>
-          <select id="ap-badge">
-            <option value="">Nenhum</option>
-            <option value="hot">🔥 Hot</option>
-            <option value="new">✨ Novo</option>
-          </select>
+          <label>Foto do Produto (opcional)</label>
+          <input type="file" id="ap-img-file" accept="image/*" style="display:none" onchange="adminPreviewImage(this)">
+          <input type="hidden" id="ap-img">
+          <div class="admin-img-pick" id="ap-img-pick" onclick="document.getElementById('ap-img-file').click()">
+            <div id="ap-img-preview" class="aip-placeholder">
+              <span style="font-size:26px;line-height:1">📷</span>
+              <span>Toque para escolher da galeria</span>
+            </div>
+          </div>
+        </div>
+        <div class="admin-status" id="admin-status"></div>
+        <div class="adm-edit-btns">
+          <button class="adm-save-btn" onclick="adminAddProduct()">💾 Salvar Produto</button>
+          <button class="adm-cancel-btn" onclick="adminToggleAddForm()">Cancelar</button>
         </div>
       </div>
-      <div class="admin-field">
-        <label>Descrição (opcional)</label>
-        <input type="text" id="ap-desc" placeholder="Ex: Crocante por fora, suculento por dentro">
-      </div>
-      <div class="admin-field">
-        <label>Foto do Produto (opcional)</label>
-        <input type="file" id="ap-img-file" accept="image/*" style="display:none" onchange="adminPreviewImage(this)">
-        <input type="hidden" id="ap-img">
-        <div class="admin-img-pick" id="ap-img-pick" onclick="document.getElementById('ap-img-file').click()">
-          <div id="ap-img-preview" class="aip-placeholder">
-            <span style="font-size:26px;line-height:1">📷</span>
-            <span>Toque para escolher da galeria</span>
+    </div><!-- /adm-tab-produtos -->
+
+    <!-- ══ ABA 2: LOCALIZAÇÃO / ENTREGA ══ -->
+    <div class="admin-tab-content" id="adm-tab-localizacao">
+      <p style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:18px;line-height:1.6;">
+        Toque em <strong style="color:#7BB8FF">Editar taxa</strong> em cada cidade para alterar o valor da entrega.
+      </p>
+
+      <!-- Brasiléia -->
+      <div class="adm-city-card adm-city-brasileia" id="adm-city-card-brasileia">
+        <div class="adm-city-top">
+          <div class="adm-city-bg">🏙️</div>
+          <div class="adm-city-meta">
+            <div class="adm-city-name-txt">Brasiléia - AC</div>
+            <div class="adm-city-fee-txt" id="adm-fee-label-brasileia">+ R$ 5,00</div>
+          </div>
+          <button class="adm-city-edit-toggle" onclick="adminToggleCityFee('brasileia')">Editar taxa</button>
+        </div>
+        <div class="adm-city-fee-form" id="adm-fee-form-brasileia">
+          <label class="adm-edit-label">Nova taxa de entrega (R$)</label>
+          <input type="number" class="adm-edit-input" id="adm-fee-input-brasileia" placeholder="Ex: 5.00" step="0.50" min="0">
+          <div class="adm-edit-btns" style="margin-top:10px;">
+            <button class="adm-fee-save-btn" onclick="adminSaveCityFee('brasileia')">💾 Salvar</button>
+            <button class="adm-fee-cancel-btn" onclick="adminToggleCityFee('brasileia')">Cancelar</button>
           </div>
         </div>
       </div>
-      <div class="admin-status" id="admin-status"></div>
-      <button class="admin-add-btn" id="admin-add-btn" onclick="adminAddProduct()">+ Adicionar Produto</button>
-    </div>
 
-    <p class="admin-section-title">Produtos Cadastrados</p>
-    <div class="admin-product-list" id="admin-product-list">
-      <div class="admin-empty">Carregando produtos...</div>
-    </div>
-  </div>
-</div>
+      <!-- Epitaciolândia -->
+      <div class="adm-city-card adm-city-epitacio" id="adm-city-card-epitaciolandia">
+        <div class="adm-city-top">
+          <div class="adm-city-bg">🌆</div>
+          <div class="adm-city-meta">
+            <div class="adm-city-name-txt">Epitaciolândia - AC</div>
+            <div class="adm-city-fee-txt" id="adm-fee-label-epitaciolandia">+ R$ 7,00</div>
+          </div>
+          <button class="adm-city-edit-toggle" onclick="adminToggleCityFee('epitaciolandia')">Editar taxa</button>
+        </div>
+        <div class="adm-city-fee-form" id="adm-fee-form-epitaciolandia">
+          <label class="adm-edit-label">Nova taxa de entrega (R$)</label>
+          <input type="number" class="adm-edit-input" id="adm-fee-input-epitaciolandia" placeholder="Ex: 7.00" step="0.50" min="0">
+          <div class="adm-edit-btns" style="margin-top:10px;">
+            <button class="adm-fee-save-btn" onclick="adminSaveCityFee('epitaciolandia')">💾 Salvar</button>
+            <button class="adm-fee-cancel-btn" onclick="adminToggleCityFee('epitaciolandia')">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-status" id="adm-city-status" style="text-align:center;padding:10px 0;min-height:20px;"></div>
+      <p style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-top:4px;">As alterações entram em vigor imediatamente para novos pedidos.</p>
+    </div><!-- /adm-tab-localizacao -->
+
+    <!-- ══ ABA 3: PIX ══ -->
+    <div class="admin-tab-content" id="adm-tab-pix">
+
+      <!-- Preview visual (como o cliente vê) -->
+      <div class="adm-pix-preview">
+        <div class="adm-pix-preview-title">👁 Como o cliente vê</div>
+        <div class="adm-pix-qr-wrap" id="adm-pix-qr-wrap">
+          <div class="adm-pix-qr-placeholder" id="adm-pix-qr-placeholder">📷<br>QR Code<br>não configurado</div>
+          <img id="adm-pix-qr-img" src="" alt="QR Code PIX" style="display:none;max-width:140px;border-radius:8px;">
+        </div>
+        <div class="adm-pix-preview-chave" id="adm-pix-preview-chave">—</div>
+        <div class="adm-pix-preview-nome" id="adm-pix-preview-nome">Recebedor não configurado</div>
+      </div>
+
+      <!-- Formulário de edição PIX -->
+      <div class="adm-pix-edit-card">
+        <div class="adm-pix-edit-title">✏️ Editar dados do PIX</div>
+
+        <label class="adm-edit-label">Chave PIX</label>
+        <input type="text" class="adm-edit-input" id="ap-pix-chave" placeholder="Ex: 68999999999 ou email@gmail.com">
+
+        <label class="adm-edit-label">Nome do Recebedor</label>
+        <input type="text" class="adm-edit-input" id="ap-pix-nome" placeholder="Ex: Deigila C. Pereira">
+
+        <label class="adm-edit-label">Banco (opcional)</label>
+        <input type="text" class="adm-edit-input" id="ap-pix-banco" placeholder="Ex: Nubank, Bradesco, Caixa...">
+
+        <label class="adm-edit-label">QR Code PIX (imagem, opcional)</label>
+        <input type="file" id="ap-pix-qr-file" accept="image/*" style="display:none" onchange="adminPreviewPixQR(this)">
+        <input type="hidden" id="ap-pix-qr-b64">
+        <div class="adm-pix-qr-pick" id="adm-pix-qr-pick" onclick="document.getElementById('ap-pix-qr-file').click()">
+          <span style="font-size:20px">📷</span>
+          <span id="adm-pix-qr-pick-label">Toque para enviar imagem do QR Code</span>
+        </div>
+
+        <div class="admin-pix-status" id="admin-pix-status" style="text-align:center;padding:10px 0;min-height:20px;font-size:13px;"></div>
+        <button class="admin-pix-save-btn" onclick="adminSavePix()" style="width:100%;padding:15px;border-radius:100px;border:none;background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;">💾 Salvar PIX</button>
+      </div>
+
+      <!-- Status atual (mantido para compatibilidade) -->
+      <div class="admin-pix-current" id="admin-pix-current" style="display:none"></div>
+    </div><!-- /adm-tab-pix -->
+
+  </div><!-- /admin-panel -->
+</div><!-- /admin-overlay -->
 
 <!-- BANNER INSTALAR APP (PWA) -->
 <div class="pwa-banner" id="pwa-banner">
@@ -2640,91 +2788,263 @@ function loadAdminProducts() {
 function renderAdminProducts(produtos) {
   const listEl = document.getElementById('admin-product-list');
   if (!listEl) return;
-  // Salva em memória para edição
   window._adminProdutos = produtos || [];
   if (!produtos || !produtos.length) {
-    listEl.innerHTML = '<div class="admin-empty">Nenhum produto cadastrado ainda.</div>';
+    listEl.innerHTML = '<div class="admin-empty" style="text-align:center;padding:32px;color:rgba(255,255,255,.35);font-size:14px;">Nenhum produto cadastrado ainda.<br><span style="font-size:12px;opacity:.6;">Use o botão abaixo para adicionar.</span></div>';
     return;
   }
   listEl.innerHTML = produtos.map(p => {
     const badgeHtml = p.badge === 'hot' ? '<span class="admin-badge ab-hot">🔥 Hot</span>'
                     : p.badge === 'new' ? '<span class="admin-badge ab-new">✨ Novo</span>' : '';
-    const iconHtml = p.imagem ? `<div class="admin-product-ic"><img src="${escHtml(p.imagem)}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;"></div>`
-                              : `<div class="admin-product-ic">${p.emoji || '🍗'}</div>`;
-    return `<div class="admin-product-item">
-      ${iconHtml}
-      <div class="admin-product-info">
-        <div class="admin-product-name">${escHtml(p.nome)}${badgeHtml}</div>
-        <div class="admin-product-meta">${escHtml(p.categoria || '')} · ${escHtml(p.descricao || '')}</div>
+    const iconHtml = p.imagem
+      ? `<div class="adm-prod-ic"><img src="${escHtml(p.imagem)}" alt="${escHtml(p.nome)}"></div>`
+      : `<div class="adm-prod-ic">${p.emoji || '🍗'}</div>`;
+    const precoFmt = 'R$ ' + Number(p.preco||0).toFixed(2).replace('.',',');
+    const catLabel = p.categoria==='acompanhamento'?'🍟 Acompanhamento':p.categoria==='bebida'?'🥤 Bebida':'🍗 Frango';
+    const badgeOpts = `<option value="">Nenhum</option><option value="hot" ${p.badge==='hot'?'selected':''}>🔥 Hot</option><option value="new" ${p.badge==='new'?'selected':''}>✨ Novo</option>`;
+    const catOpts = `<option value="frango" ${p.categoria==='frango'?'selected':''}>🍗 Frango</option><option value="acompanhamento" ${p.categoria==='acompanhamento'?'selected':''}>🍟 Acomp.</option><option value="bebida" ${p.categoria==='bebida'?'selected':''}>🥤 Bebida</option>`;
+    return `<div class="adm-prod-card" id="adm-card-${escHtml(p.id)}">
+      <div class="adm-prod-main">
+        ${iconHtml}
+        <div class="adm-prod-info">
+          <div class="adm-prod-name">${escHtml(p.nome)}${badgeHtml}</div>
+          <div class="adm-prod-price">${precoFmt} <span style="font-size:11px;color:rgba(255,255,255,.35);font-weight:400;">· ${catLabel}</span></div>
+          ${p.descricao ? `<div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;">${escHtml(p.descricao)}</div>` : ''}
+        </div>
+        <div class="adm-prod-acts">
+          <button class="adm-edit-ic-btn" onclick="adminInlineEdit('${escHtml(p.id)}')" title="Editar">✏️</button>
+          <button class="adm-del-ic-btn" onclick="adminDeleteProduct('${escHtml(p.id)}')" title="Apagar">🗑️</button>
+        </div>
       </div>
-      <div class="admin-product-price">R$ ${Number(p.preco||0).toFixed(2).replace('.',',')}</div>
-      <div class="admin-product-actions">
-        <button class="admin-edit-btn" onclick="adminEditProduct('${escHtml(p.id)}')">✏️</button>
-        <button class="admin-del-btn" onclick="adminDeleteProduct('${escHtml(p.id)}')">🗑️</button>
+      <!-- Formulário inline de edição -->
+      <div class="adm-edit-form" id="adm-eform-${escHtml(p.id)}">
+        <label class="adm-edit-label">Nome</label>
+        <input type="text" class="adm-edit-input" id="adm-ename-${escHtml(p.id)}" value="${escHtml(p.nome||'')}">
+        <div class="adm-edit-row">
+          <div>
+            <label class="adm-edit-label">Preço (R$)</label>
+            <input type="number" class="adm-edit-input" id="adm-epreco-${escHtml(p.id)}" value="${Number(p.preco||0).toFixed(2)}" step="0.50" min="0">
+          </div>
+          <div>
+            <label class="adm-edit-label">Emoji</label>
+            <input type="text" class="adm-edit-input" id="adm-eemoji-${escHtml(p.id)}" value="${escHtml(p.emoji||'')}" maxlength="4" placeholder="🍗">
+          </div>
+        </div>
+        <label class="adm-edit-label">Descrição</label>
+        <input type="text" class="adm-edit-input" id="adm-edesc-${escHtml(p.id)}" value="${escHtml(p.descricao||'')}" placeholder="Descrição breve...">
+        <div class="adm-edit-row">
+          <div>
+            <label class="adm-edit-label">Categoria</label>
+            <select class="adm-edit-input" id="adm-ecat-${escHtml(p.id)}" style="padding:10px 12px;">${catOpts}</select>
+          </div>
+          <div>
+            <label class="adm-edit-label">Badge</label>
+            <select class="adm-edit-input" id="adm-ebadge-${escHtml(p.id)}" style="padding:10px 12px;">${badgeOpts}</select>
+          </div>
+        </div>
+        <div class="adm-edit-btns">
+          <button class="adm-save-btn" onclick="adminSaveInlineEdit('${escHtml(p.id)}')">💾 Salvar</button>
+          <button class="adm-cancel-btn" onclick="adminCancelInlineEdit('${escHtml(p.id)}')">Cancelar</button>
+        </div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── EDITAR PRODUTO
-window.adminEditProduct = function(id) {
+// ── INLINE EDIT (novo sistema de cards)
+window.adminInlineEdit = function(id) {
+  // Fecha qualquer outro card aberto
+  document.querySelectorAll('.adm-prod-card.editing').forEach(c => {
+    if (c.id !== 'adm-card-' + id) c.classList.remove('editing');
+  });
+  const card = document.getElementById('adm-card-' + id);
+  if (card) card.classList.toggle('editing');
+};
+
+window.adminCancelInlineEdit = function(id) {
+  const card = document.getElementById('adm-card-' + id);
+  if (card) card.classList.remove('editing');
+};
+
+window.adminSaveInlineEdit = async function(id) {
   if (!_hasAdminSession()) { window.adminLogout(); return; }
   _renewAdminSession();
+  function _san(s, max) { return String(s||'').replace(/[<>"'`]/g,'').trim().substring(0,max||200); }
+  const nome  = _san(document.getElementById('adm-ename-'+id).value, 100);
+  const preco = parseFloat(document.getElementById('adm-epreco-'+id).value);
+  const emoji = _san(document.getElementById('adm-eemoji-'+id).value, 8) || '🍗';
+  const desc  = _san(document.getElementById('adm-edesc-'+id).value, 300);
+  const cat   = _san(document.getElementById('adm-ecat-'+id).value, 30);
+  const badge = _san(document.getElementById('adm-ebadge-'+id).value, 20);
 
-  const prods = window._adminProdutos || [];
-  const p = prods.find(x => x.id === id);
-  if (!p) { alert('Produto não encontrado.'); return; }
+  if (!nome) { showToast('⚠️ Digite o nome do produto'); return; }
+  if (!preco || preco <= 0) { showToast('⚠️ Digite um preço válido'); return; }
 
-  // Preenche os campos com os dados do produto
-  document.getElementById('ap-nome').value = p.nome || '';
-  document.getElementById('ap-preco').value = p.preco || '';
-  document.getElementById('ap-emoji').value = p.emoji || '';
-  document.getElementById('ap-desc').value = p.descricao || '';
-  document.getElementById('ap-cat').value = p.categoria || 'frango';
-  document.getElementById('ap-badge').value = p.badge || '';
-  document.getElementById('ap-edit-id').value = id;
+  const produto = { nome, preco, emoji, categoria: cat, badge, descricao: desc };
 
-  // Preview da imagem se houver
-  const pick = document.getElementById('ap-img-pick');
-  const prev = document.getElementById('ap-img-preview');
-  if (p.imagem) {
-    document.getElementById('ap-img').value = p.imagem;
-    pick.classList.add('has-img');
-    prev.className = '';
-    prev.innerHTML = `<img src="${escHtml(p.imagem)}" alt="preview">`;
+  if (_firebaseOk && _db) {
+    try {
+      await updateDoc(doc(_db, 'produtos', id), produto);
+      showToast('✅ Produto atualizado!');
+    } catch(e) { showToast('❌ Erro ao atualizar'); return; }
   } else {
-    document.getElementById('ap-img').value = '';
-    pick.classList.remove('has-img');
-    prev.className = 'aip-placeholder';
-    prev.innerHTML = '<span style="font-size:26px;line-height:1">📷</span><span>Toque para escolher da galeria</span>';
+    const local = JSON.parse(localStorage.getItem('_pc_produtos') || '[]');
+    const idx = local.findIndex(p => p.id === id);
+    if (idx >= 0) local[idx] = { ...local[idx], ...produto };
+    localStorage.setItem('_pc_produtos', JSON.stringify(local));
+    showToast('✅ Produto atualizado (local)!');
+    renderAdminProducts(local);
   }
-
-  // Mostra barra de modo edição
-  document.getElementById('admin-edit-mode-bar').classList.add('show');
-  document.getElementById('admin-add-btn').textContent = '💾 Salvar alterações';
-  document.getElementById('admin-status').textContent = '';
-
-  // Scroll até o formulário
-  document.getElementById('admin-add-btn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  window.adminCancelInlineEdit(id);
 };
 
-window.adminCancelEdit = function() {
-  document.getElementById('ap-edit-id').value = '';
-  document.getElementById('admin-edit-mode-bar').classList.remove('show');
-  document.getElementById('admin-add-btn').textContent = '+ Adicionar Produto';
-  // Limpa campos
-  ['ap-nome','ap-preco','ap-emoji','ap-desc'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('ap-cat').value = 'frango';
-  document.getElementById('ap-badge').value = '';
-  document.getElementById('ap-img').value = '';
-  document.getElementById('ap-img-file').value = '';
-  const pick = document.getElementById('ap-img-pick');
-  const prev = document.getElementById('ap-img-preview');
-  pick.classList.remove('has-img');
-  prev.className = 'aip-placeholder';
-  prev.innerHTML = '<span style="font-size:26px;line-height:1">📷</span><span>Toque para escolher da galeria</span>';
-  document.getElementById('admin-status').textContent = '';
+// ── TOGGLE FORMULÁRIO DE ADIÇÃO
+window.adminToggleAddForm = function() {
+  const wrap = document.getElementById('adm-add-form-wrap');
+  if (!wrap) return;
+  const isOpen = wrap.classList.toggle('show');
+  if (!isOpen) {
+    // limpa campos ao fechar
+    ['ap-nome','ap-preco','ap-emoji','ap-desc'].forEach(id => {
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+    const cat = document.getElementById('ap-cat'); if(cat) cat.value = 'frango';
+    const badge = document.getElementById('ap-badge'); if(badge) badge.value = '';
+    const img = document.getElementById('ap-img'); if(img) img.value = '';
+    const imgFile = document.getElementById('ap-img-file'); if(imgFile) imgFile.value = '';
+    const pick = document.getElementById('ap-img-pick');
+    const prev = document.getElementById('ap-img-preview');
+    if(pick) pick.classList.remove('has-img');
+    if(prev) { prev.className = 'aip-placeholder'; prev.innerHTML = '<span style="font-size:26px;line-height:1">📷</span><span>Toque para escolher da galeria</span>'; }
+  }
 };
+
+// ── EDITAR PRODUTO (compatibilidade — redireciona para inline)
+window.adminEditProduct = function(id) { window.adminInlineEdit(id); };
+window.adminCancelEdit = function() {};
+
+// ── ABAS DO ADMIN
+window.adminSwitchTab = function(tab, btn) {
+  document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('adm-tab-' + tab);
+  if (el) el.classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (tab === 'localizacao') adminLoadCityFees();
+  if (tab === 'pix') adminLoadPixPreview();
+};
+
+// ── TAXAS DE ENTREGA (Localização)
+var _cityFees = { brasileia: 5, epitaciolandia: 7 };
+
+async function adminLoadCityFees() {
+  if (_firebaseOk && _db) {
+    try {
+      const snap = await getDoc(doc(_db, 'configuracoes', 'taxas'));
+      if (snap.exists()) {
+        const d = snap.data();
+        if (d.brasileia !== undefined) _cityFees.brasileia = d.brasileia;
+        if (d.epitaciolandia !== undefined) _cityFees.epitaciolandia = d.epitaciolandia;
+      }
+    } catch(e) {}
+  } else {
+    const local = JSON.parse(localStorage.getItem('_pc_taxas') || 'null');
+    if (local) { _cityFees.brasileia = local.brasileia || 5; _cityFees.epitaciolandia = local.epitaciolandia || 7; }
+  }
+  _renderCityFeeLabels();
+}
+
+function _renderCityFeeLabels() {
+  const lb1 = document.getElementById('adm-fee-label-brasileia');
+  const lb2 = document.getElementById('adm-fee-label-epitaciolandia');
+  if(lb1) lb1.textContent = '+ R$ ' + Number(_cityFees.brasileia).toFixed(2).replace('.',',');
+  if(lb2) lb2.textContent = '+ R$ ' + Number(_cityFees.epitaciolandia).toFixed(2).replace('.',',');
+  // Atualiza também na tela do cliente
+  const cf1 = document.querySelector('#city-brasileia .city-fee');
+  const cf2 = document.querySelector('#city-epitaciolandia .city-fee');
+  if(cf1) cf1.textContent = '+ R$ ' + Number(_cityFees.brasileia).toFixed(2).replace('.',',');
+  if(cf2) cf2.textContent = '+ R$ ' + Number(_cityFees.epitaciolandia).toFixed(2).replace('.',',');
+}
+
+window.adminToggleCityFee = function(city) {
+  const card = document.getElementById('adm-city-card-' + city);
+  if (!card) return;
+  const isEditing = card.classList.toggle('editing-fee');
+  if (isEditing) {
+    const inp = document.getElementById('adm-fee-input-' + city);
+    if (inp) inp.value = Number(_cityFees[city]).toFixed(2);
+  }
+};
+
+window.adminSaveCityFee = async function(city) {
+  if (!_hasAdminSession()) { window.adminLogout(); return; }
+  _renewAdminSession();
+  const inp = document.getElementById('adm-fee-input-' + city);
+  const fee = parseFloat(inp ? inp.value : 0);
+  const status = document.getElementById('adm-city-status');
+  if (isNaN(fee) || fee < 0 || fee > 999) { if(status){status.textContent='⚠️ Taxa inválida';status.style.color='#FF6B6B';} return; }
+  _cityFees[city] = fee;
+
+  if (_firebaseOk && _db) {
+    try {
+      await setDoc(doc(_db, 'configuracoes', 'taxas'), { ..._cityFees, updatedAt: serverTimestamp() });
+      if(status){status.textContent='✅ Taxa atualizada!';status.style.color='#4ADE80';}
+    } catch(e) { if(status){status.textContent='❌ Erro ao salvar';status.style.color='#FF6B6B';} return; }
+  } else {
+    localStorage.setItem('_pc_taxas', JSON.stringify(_cityFees));
+    if(status){status.textContent='✅ Taxa atualizada (local)!';status.style.color='#4ADE80';}
+  }
+  _renderCityFeeLabels();
+  window.adminToggleCityFee(city);
+  setTimeout(() => { if(status) status.textContent=''; }, 3000);
+};
+
+// ── PREVIEW DO QR CODE PIX NO ADMIN
+window.adminPreviewPixQR = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const b64 = e.target.result;
+    document.getElementById('ap-pix-qr-b64').value = b64;
+    const pick = document.getElementById('adm-pix-qr-pick');
+    const lbl  = document.getElementById('adm-pix-qr-pick-label');
+    if(pick) pick.classList.add('has-img');
+    if(lbl)  lbl.textContent = '✅ Imagem selecionada — toque para trocar';
+    // Mostra preview
+    const img = document.getElementById('adm-pix-qr-img');
+    const ph  = document.getElementById('adm-pix-qr-placeholder');
+    if(img){ img.src = b64; img.style.display = 'block'; }
+    if(ph) ph.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+};
+
+// ── CARREGA PREVIEW DO PIX NO ADMIN
+async function adminLoadPixPreview() {
+  let chave = '—', nome = 'Recebedor não configurado', qr = null;
+  if (_firebaseOk && _db) {
+    try {
+      const snap = await getDoc(doc(_db, 'configuracoes', 'pix'));
+      if (snap.exists()) {
+        const d = snap.data();
+        chave = d.chave || '—';
+        nome  = d.nome  || '—';
+        qr    = d.qrCodeBase64 || null;
+      }
+    } catch(e) {}
+  } else {
+    const local = JSON.parse(localStorage.getItem('_pc_pix') || 'null');
+    if (local) { chave = local.chave||'—'; nome = local.nome||'—'; qr = local.qrCodeBase64||null; }
+  }
+  const el1 = document.getElementById('adm-pix-preview-chave');
+  const el2 = document.getElementById('adm-pix-preview-nome');
+  const img  = document.getElementById('adm-pix-qr-img');
+  const ph   = document.getElementById('adm-pix-qr-placeholder');
+  if(el1) el1.textContent = chave;
+  if(el2) el2.textContent = nome;
+  if(qr && img && ph) { img.src = qr; img.style.display = 'block'; ph.style.display = 'none'; }
+}
 
 // ── SALVAR PIX
 window.adminSavePix = async function() {
@@ -2735,6 +3055,7 @@ window.adminSavePix = async function() {
   const chave = _san(document.getElementById('ap-pix-chave').value, 200);
   const nome  = _san(document.getElementById('ap-pix-nome').value, 100);
   const banco = _san(document.getElementById('ap-pix-banco').value, 60);
+  const qrB64 = (document.getElementById('ap-pix-qr-b64') || {}).value || '';
   const status = document.getElementById('admin-pix-status');
 
   if (!chave) { status.textContent = '⚠️ Digite a chave PIX'; status.style.color = '#FF6B6B'; return; }
@@ -2742,12 +3063,24 @@ window.adminSavePix = async function() {
 
   status.textContent = '⏳ Salvando...'; status.style.color = 'rgba(255,255,255,.5)';
 
+  const pixData = { chave, nome, banco };
+  if (qrB64) pixData.qrCodeBase64 = qrB64;
+
   if (_firebaseOk && _db) {
     try {
-      await setDoc(doc(_db, 'configuracoes', 'pix'), { chave, nome, banco, updatedAt: serverTimestamp() });
+      await setDoc(doc(_db, 'configuracoes', 'pix'), { ...pixData, updatedAt: serverTimestamp() });
       status.textContent = '✅ PIX atualizado com sucesso!'; status.style.color = '#4ADE80';
-      document.getElementById('admin-pix-current').innerHTML =
-        `<strong>Chave atual:</strong> ${escHtml(chave)}<br><strong>Recebedor:</strong> ${escHtml(nome)}<br><strong>Banco:</strong> ${escHtml(banco || '—')}`;
+      // Atualiza preview
+      const el1 = document.getElementById('adm-pix-preview-chave');
+      const el2 = document.getElementById('adm-pix-preview-nome');
+      if(el1) el1.textContent = chave;
+      if(el2) el2.textContent = nome;
+      if(qrB64) {
+        const img = document.getElementById('adm-pix-qr-img');
+        const ph  = document.getElementById('adm-pix-qr-placeholder');
+        if(img){ img.src = qrB64; img.style.display='block'; }
+        if(ph) ph.style.display='none';
+      }
       // Atualiza o vault em memória para refletir imediatamente
       PixVault.init(chave, nome).then(() => {
         PixVault.getPk().then(pk => {
@@ -2758,42 +3091,36 @@ window.adminSavePix = async function() {
       document.getElementById('ap-pix-chave').value = '';
       document.getElementById('ap-pix-nome').value = '';
       document.getElementById('ap-pix-banco').value = '';
-      setTimeout(() => { status.textContent = ''; }, 4000);
     } catch(e) {
       status.textContent = '❌ Erro ao salvar. Verifique o Firebase.'; status.style.color = '#FF6B6B';
     }
   } else {
     // Fallback localStorage
-    localStorage.setItem('_pc_pix', JSON.stringify({ chave, nome, banco }));
+    localStorage.setItem('_pc_pix', JSON.stringify(pixData));
     status.textContent = '✅ PIX salvo (modo local)!'; status.style.color = '#4ADE80';
-    document.getElementById('admin-pix-current').innerHTML =
-      `<strong>Chave atual:</strong> ${escHtml(chave)}<br><strong>Recebedor:</strong> ${escHtml(nome)}<br><strong>Banco:</strong> ${escHtml(banco || '—')}`;
-    setTimeout(() => { status.textContent = ''; }, 4000);
+    const el1 = document.getElementById('adm-pix-preview-chave');
+    const el2 = document.getElementById('adm-pix-preview-nome');
+    if(el1) el1.textContent = chave;
+    if(el2) el2.textContent = nome;
+    if(qrB64) {
+      const img = document.getElementById('adm-pix-qr-img');
+      const ph  = document.getElementById('adm-pix-qr-placeholder');
+      if(img){ img.src = qrB64; img.style.display='block'; }
+      if(ph) ph.style.display='none';
+    }
+    document.getElementById('ap-pix-chave').value = '';
+    document.getElementById('ap-pix-nome').value = '';
+    document.getElementById('ap-pix-banco').value = '';
   }
+  setTimeout(() => { if(status) status.textContent = ''; }, 4000);
 };
 
 // ── CARREGAR PIX ATUAL NO PAINEL ADMIN
 async function loadAdminPix() {
-  const el = document.getElementById('admin-pix-current');
-  if (!el) return;
-  if (_firebaseOk && _db) {
-    try {
-      const snap = await getDoc(doc(_db, 'configuracoes', 'pix'));
-      if (snap.exists()) {
-        const d = snap.data();
-        el.innerHTML = `<strong>Chave atual:</strong> ${escHtml(d.chave || '—')}<br><strong>Recebedor:</strong> ${escHtml(d.nome || '—')}<br><strong>Banco:</strong> ${escHtml(d.banco || '—')}`;
-      } else {
-        el.innerHTML = '<strong>PIX:</strong> Nenhuma chave cadastrada ainda.<br><span style="font-size:11px;color:rgba(255,255,255,.4);">Preencha os campos abaixo para configurar.</span>';
-      }
-    } catch(e) { el.innerHTML = '<strong>PIX:</strong> Erro ao carregar.'; }
-  } else {
-    const local = JSON.parse(localStorage.getItem('_pc_pix') || 'null');
-    if (local) {
-      el.innerHTML = `<strong>Chave atual:</strong> ${escHtml(local.chave || '—')}<br><strong>Recebedor:</strong> ${escHtml(local.nome || '—')}<br><strong>Banco:</strong> ${escHtml(local.banco || '—')}`;
-    } else {
-      el.innerHTML = '<strong>PIX:</strong> Nenhuma chave cadastrada ainda.';
-    }
-  }
+  // No novo sistema, o preview é carregado ao clicar na aba PIX
+  // Chama adminLoadPixPreview se a aba já estiver ativa
+  const tabPix = document.getElementById('adm-tab-pix');
+  if (tabPix && tabPix.classList.contains('active')) adminLoadPixPreview();
 }
 
 function escHtml(s) {
