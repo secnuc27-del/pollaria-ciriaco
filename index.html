@@ -890,9 +890,14 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
         <div class="admin-empty">Carregando produtos...</div>
       </div>
 
-      <!-- Botão Adicionar Produto -->
-      <button class="adm-add-trigger" onclick="adminToggleAddForm()">
-        <span style="font-size:20px">＋</span> Adicionar novo produto
+      <!-- Botão Adicionar Produto (Frangos / Bebidas) -->
+      <button class="adm-add-trigger" onclick="adminToggleAddForm('produto')">
+        <span style="font-size:20px">＋</span> Adicionar prato ou bebida
+      </button>
+
+      <!-- Botão Adicionar Outros itens -->
+      <button class="adm-add-trigger" onclick="adminToggleAddForm('outro')" style="margin-top:8px;border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.06);color:#A78BFA;">
+        <span style="font-size:20px">＋</span> Adicionar outros itens (pirulito, bombom...)
       </button>
 
       <!-- Formulário de adição (oculto inicialmente) -->
@@ -920,6 +925,7 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
               <option value="frango">🍗 Frango</option>
               <option value="acompanhamento">🍟 Acompanhamento</option>
               <option value="bebida">🥤 Bebida</option>
+              <option value="outro">🛍️ Outros itens</option>
             </select>
           </div>
           <div class="admin-field">
@@ -949,7 +955,7 @@ input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
         <div class="admin-status" id="admin-status"></div>
         <div class="adm-edit-btns">
           <button class="adm-save-btn" onclick="adminAddProduct()">💾 Salvar Produto</button>
-          <button class="adm-cancel-btn" onclick="adminToggleAddForm()">Cancelar</button>
+          <button class="adm-cancel-btn" onclick="adminToggleAddForm(null)">Cancelar</button>
         </div>
       </div>
     </div><!-- /adm-tab-produtos -->
@@ -2785,70 +2791,113 @@ function loadAdminProducts() {
   }
 }
 
+// Produtos fixos do cardápio (hardcoded no sistema)
+var _PRODUTOS_FIXOS = [
+  { id: 'fixo-coxa',     nome: 'Coxa com Sobre-coxa', preco: 20,  emoji: '🍗', categoria: 'frango',         badge: 'hot', descricao: 'Temperada na perfeição, crocante por fora e suculenta por dentro', _fixo: true },
+  { id: 'fixo-file',     nome: 'Peito',                preco: 20,  emoji: '🍗', categoria: 'frango',         badge: '',    descricao: 'Macio, suculento e com aquele tempero especial da casa',          _fixo: true },
+  { id: 'fixo-asa',      nome: 'Asa e Coxinha da Asa', preco: 15,  emoji: '🍖', categoria: 'frango',         badge: '',    descricao: 'Crocante, douradinha e irresistível',                             _fixo: true },
+  { id: 'fixo-batatap',  nome: 'Batata Frita Peq.',    preco: 10,  emoji: '🍟', categoria: 'acompanhamento', badge: '',    descricao: 'Crocante e douradinha, porção pequena',                          _fixo: true },
+  { id: 'fixo-batatag',  nome: 'Batata Frita Gde.',    preco: 15,  emoji: '🍟', categoria: 'acompanhamento', badge: '',    descricao: 'Crocante e douradinha, porção grande',                           _fixo: true },
+  { id: 'fixo-coca',     nome: 'Coca-Cola 2L',         preco: 15,  emoji: '🥤', categoria: 'bebida',         badge: '',    descricao: 'Gelada e refrescante',                                           _fixo: true },
+];
+
+function _buildProdCard(p) {
+  const badgeHtml = p.badge === 'hot' ? '<span class="admin-badge ab-hot">🔥 Hot</span>'
+                  : p.badge === 'new' ? '<span class="admin-badge ab-new">✨ Novo</span>' : '';
+  const iconHtml = p.imagem
+    ? `<div class="adm-prod-ic"><img src="${escHtml(p.imagem)}" alt="${escHtml(p.nome)}"></div>`
+    : `<div class="adm-prod-ic">${p.emoji || '🍗'}</div>`;
+  const precoFmt = 'R$ ' + Number(p.preco||0).toFixed(2).replace('.',',');
+  const catLabel = p.categoria==='acompanhamento'?'🍟 Acompanhamento':p.categoria==='bebida'?'🥤 Bebida':p.categoria==='outro'?'🛍️ Outros':'🍗 Frango';
+  const badgeOpts = `<option value="">Nenhum</option><option value="hot" ${p.badge==='hot'?'selected':''}>🔥 Hot</option><option value="new" ${p.badge==='new'?'selected':''}>✨ Novo</option>`;
+  const catOpts = `<option value="frango" ${p.categoria==='frango'?'selected':''}>🍗 Frango</option><option value="acompanhamento" ${p.categoria==='acompanhamento'?'selected':''}>🍟 Acomp.</option><option value="bebida" ${p.categoria==='bebida'?'selected':''}>🥤 Bebida</option><option value="outro" ${p.categoria==='outro'?'selected':''}>🛍️ Outros</option>`;
+  const fixoBadge = p._fixo ? '<span style="font-size:9px;background:rgba(200,145,42,.18);color:#C8912A;border:1px solid rgba(200,145,42,.3);border-radius:6px;padding:1px 7px;margin-left:5px;letter-spacing:.5px;">FIXO</span>' : '';
+  const safeId = escHtml(p.id);
+  return `<div class="adm-prod-card" id="adm-card-${safeId}">
+    <div class="adm-prod-main">
+      ${iconHtml}
+      <div class="adm-prod-info">
+        <div class="adm-prod-name">${escHtml(p.nome)}${badgeHtml}${fixoBadge}</div>
+        <div class="adm-prod-price">${precoFmt} <span style="font-size:11px;color:rgba(255,255,255,.35);font-weight:400;">· ${catLabel}</span></div>
+        ${p.descricao ? `<div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;">${escHtml(p.descricao)}</div>` : ''}
+      </div>
+      <div class="adm-prod-acts">
+        <button class="adm-edit-ic-btn" onclick="adminInlineEdit('${safeId}')" title="Editar">✏️</button>
+        ${p._fixo ? '' : `<button class="adm-del-ic-btn" onclick="adminDeleteProduct('${safeId}')" title="Apagar">🗑️</button>`}
+      </div>
+    </div>
+    <div class="adm-edit-form" id="adm-eform-${safeId}">
+      <label class="adm-edit-label">Nome</label>
+      <input type="text" class="adm-edit-input" id="adm-ename-${safeId}" value="${escHtml(p.nome||'')}">
+      <div class="adm-edit-row">
+        <div>
+          <label class="adm-edit-label">Preço (R$)</label>
+          <input type="number" class="adm-edit-input" id="adm-epreco-${safeId}" value="${Number(p.preco||0).toFixed(2)}" step="0.50" min="0">
+        </div>
+        <div>
+          <label class="adm-edit-label">Emoji</label>
+          <input type="text" class="adm-edit-input" id="adm-eemoji-${safeId}" value="${escHtml(p.emoji||'')}" maxlength="4" placeholder="🍗">
+        </div>
+      </div>
+      <label class="adm-edit-label">Descrição</label>
+      <input type="text" class="adm-edit-input" id="adm-edesc-${safeId}" value="${escHtml(p.descricao||'')}" placeholder="Descrição breve...">
+      <div class="adm-edit-row">
+        <div>
+          <label class="adm-edit-label">Categoria</label>
+          <select class="adm-edit-input" id="adm-ecat-${safeId}" style="padding:10px 12px;">${catOpts}</select>
+        </div>
+        <div>
+          <label class="adm-edit-label">Badge</label>
+          <select class="adm-edit-input" id="adm-ebadge-${safeId}" style="padding:10px 12px;">${badgeOpts}</select>
+        </div>
+      </div>
+      <div class="adm-edit-btns">
+        <button class="adm-save-btn" onclick="adminSaveInlineEdit('${safeId}')">💾 Salvar</button>
+        <button class="adm-cancel-btn" onclick="adminCancelInlineEdit('${safeId}')">Cancelar</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function _buildSection(titulo, emoji, corHex, produtos) {
+  if (!produtos.length) return '';
+  return `<div style="margin-bottom:6px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:${corHex};margin:18px 0 10px;display:flex;align-items:center;gap:8px;">
+      ${emoji} ${titulo}
+      <span style="flex:1;height:1px;background:linear-gradient(90deg,${corHex}55,transparent);display:block;"></span>
+    </div>
+    ${produtos.map(_buildProdCard).join('')}
+  </div>`;
+}
+
 function renderAdminProducts(produtos) {
   const listEl = document.getElementById('admin-product-list');
   if (!listEl) return;
-  window._adminProdutos = produtos || [];
-  if (!produtos || !produtos.length) {
-    listEl.innerHTML = '<div class="admin-empty" style="text-align:center;padding:32px;color:rgba(255,255,255,.35);font-size:14px;">Nenhum produto cadastrado ainda.<br><span style="font-size:12px;opacity:.6;">Use o botão abaixo para adicionar.</span></div>';
-    return;
-  }
-  listEl.innerHTML = produtos.map(p => {
-    const badgeHtml = p.badge === 'hot' ? '<span class="admin-badge ab-hot">🔥 Hot</span>'
-                    : p.badge === 'new' ? '<span class="admin-badge ab-new">✨ Novo</span>' : '';
-    const iconHtml = p.imagem
-      ? `<div class="adm-prod-ic"><img src="${escHtml(p.imagem)}" alt="${escHtml(p.nome)}"></div>`
-      : `<div class="adm-prod-ic">${p.emoji || '🍗'}</div>`;
-    const precoFmt = 'R$ ' + Number(p.preco||0).toFixed(2).replace('.',',');
-    const catLabel = p.categoria==='acompanhamento'?'🍟 Acompanhamento':p.categoria==='bebida'?'🥤 Bebida':'🍗 Frango';
-    const badgeOpts = `<option value="">Nenhum</option><option value="hot" ${p.badge==='hot'?'selected':''}>🔥 Hot</option><option value="new" ${p.badge==='new'?'selected':''}>✨ Novo</option>`;
-    const catOpts = `<option value="frango" ${p.categoria==='frango'?'selected':''}>🍗 Frango</option><option value="acompanhamento" ${p.categoria==='acompanhamento'?'selected':''}>🍟 Acomp.</option><option value="bebida" ${p.categoria==='bebida'?'selected':''}>🥤 Bebida</option>`;
-    return `<div class="adm-prod-card" id="adm-card-${escHtml(p.id)}">
-      <div class="adm-prod-main">
-        ${iconHtml}
-        <div class="adm-prod-info">
-          <div class="adm-prod-name">${escHtml(p.nome)}${badgeHtml}</div>
-          <div class="adm-prod-price">${precoFmt} <span style="font-size:11px;color:rgba(255,255,255,.35);font-weight:400;">· ${catLabel}</span></div>
-          ${p.descricao ? `<div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;">${escHtml(p.descricao)}</div>` : ''}
-        </div>
-        <div class="adm-prod-acts">
-          <button class="adm-edit-ic-btn" onclick="adminInlineEdit('${escHtml(p.id)}')" title="Editar">✏️</button>
-          <button class="adm-del-ic-btn" onclick="adminDeleteProduct('${escHtml(p.id)}')" title="Apagar">🗑️</button>
-        </div>
-      </div>
-      <!-- Formulário inline de edição -->
-      <div class="adm-edit-form" id="adm-eform-${escHtml(p.id)}">
-        <label class="adm-edit-label">Nome</label>
-        <input type="text" class="adm-edit-input" id="adm-ename-${escHtml(p.id)}" value="${escHtml(p.nome||'')}">
-        <div class="adm-edit-row">
-          <div>
-            <label class="adm-edit-label">Preço (R$)</label>
-            <input type="number" class="adm-edit-input" id="adm-epreco-${escHtml(p.id)}" value="${Number(p.preco||0).toFixed(2)}" step="0.50" min="0">
-          </div>
-          <div>
-            <label class="adm-edit-label">Emoji</label>
-            <input type="text" class="adm-edit-input" id="adm-eemoji-${escHtml(p.id)}" value="${escHtml(p.emoji||'')}" maxlength="4" placeholder="🍗">
-          </div>
-        </div>
-        <label class="adm-edit-label">Descrição</label>
-        <input type="text" class="adm-edit-input" id="adm-edesc-${escHtml(p.id)}" value="${escHtml(p.descricao||'')}" placeholder="Descrição breve...">
-        <div class="adm-edit-row">
-          <div>
-            <label class="adm-edit-label">Categoria</label>
-            <select class="adm-edit-input" id="adm-ecat-${escHtml(p.id)}" style="padding:10px 12px;">${catOpts}</select>
-          </div>
-          <div>
-            <label class="adm-edit-label">Badge</label>
-            <select class="adm-edit-input" id="adm-ebadge-${escHtml(p.id)}" style="padding:10px 12px;">${badgeOpts}</select>
-          </div>
-        </div>
-        <div class="adm-edit-btns">
-          <button class="adm-save-btn" onclick="adminSaveInlineEdit('${escHtml(p.id)}')">💾 Salvar</button>
-          <button class="adm-cancel-btn" onclick="adminCancelInlineEdit('${escHtml(p.id)}')">Cancelar</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+
+  // Carrega overrides salvos de produtos fixos (edições feitas pela admin)
+  const overrides = JSON.parse(localStorage.getItem('_pc_fixos_overrides') || '{}');
+  const fixosComOverride = _PRODUTOS_FIXOS.map(p => {
+    if (overrides[p.id]) return { ...p, ...overrides[p.id], _fixo: true };
+    return { ...p };
+  });
+
+  // Junta fixos + dinâmicos do Firebase/localStorage
+  window._adminProdutos = [...fixosComOverride, ...(produtos || [])];
+  const todos = window._adminProdutos;
+
+  const frangos       = todos.filter(p => p.categoria === 'frango');
+  const acomps        = todos.filter(p => p.categoria === 'acompanhamento');
+  const bebidas       = todos.filter(p => p.categoria === 'bebida');
+  const outros        = todos.filter(p => p.categoria === 'outro' || (!['frango','acompanhamento','bebida'].includes(p.categoria) && !p.categoria));
+
+  let html = '';
+  html += _buildSection('Frangos',        '🍗', '#F07020', frangos);
+  html += _buildSection('Acompanhamentos','🍟', '#C8912A', acomps);
+  html += _buildSection('Bebidas',        '🥤', '#4ADE80', bebidas);
+  html += _buildSection('Outros itens',   '🛍️', '#A78BFA', outros);
+
+  if (!html) html = '<div class="admin-empty" style="text-align:center;padding:32px;color:rgba(255,255,255,.35);font-size:14px;">Nenhum produto encontrado.</div>';
+  listEl.innerHTML = html;
 }
 
 // ── INLINE EDIT (novo sistema de cards)
@@ -2882,6 +2931,26 @@ window.adminSaveInlineEdit = async function(id) {
 
   const produto = { nome, preco, emoji, categoria: cat, badge, descricao: desc };
 
+  // Verifica se é um produto fixo (hardcoded)
+  const isFixo = _PRODUTOS_FIXOS.some(p => p.id === id);
+
+  if (isFixo) {
+    // Salva override no localStorage
+    const overrides = JSON.parse(localStorage.getItem('_pc_fixos_overrides') || '{}');
+    overrides[id] = produto;
+    localStorage.setItem('_pc_fixos_overrides', JSON.stringify(overrides));
+    // Também salva no Firebase se disponível
+    if (_firebaseOk && _db) {
+      try { await setDoc(doc(_db, 'fixos_overrides', id), produto); } catch(e) {}
+    }
+    showToast('✅ Produto atualizado!');
+    // Re-carrega lista para refletir mudanças
+    const local = JSON.parse(localStorage.getItem('_pc_produtos') || '[]');
+    renderAdminProducts(local);
+    window.adminCancelInlineEdit(id);
+    return;
+  }
+
   if (_firebaseOk && _db) {
     try {
       await updateDoc(doc(_db, 'produtos', id), produto);
@@ -2899,11 +2968,23 @@ window.adminSaveInlineEdit = async function(id) {
 };
 
 // ── TOGGLE FORMULÁRIO DE ADIÇÃO
-window.adminToggleAddForm = function() {
+window.adminToggleAddForm = function(tipo) {
   const wrap = document.getElementById('adm-add-form-wrap');
   if (!wrap) return;
   const isOpen = wrap.classList.toggle('show');
-  if (!isOpen) {
+  if (isOpen) {
+    // Define a categoria inicial com base no tipo
+    const cat = document.getElementById('ap-cat');
+    if (cat && tipo === 'outro') cat.value = 'outro';
+    else if (cat) cat.value = 'frango';
+    // Atualiza título do formulário
+    const titulo = wrap.querySelector('.admin-section-title');
+    if (titulo) {
+      if (tipo === 'outro') titulo.textContent = '✏️ Novo item (outros produtos)';
+      else titulo.textContent = '✏️ Novo Produto';
+    }
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
     // limpa campos ao fechar
     ['ap-nome','ap-preco','ap-emoji','ap-desc'].forEach(id => {
       const el = document.getElementById(id); if(el) el.value = '';
